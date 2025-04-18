@@ -1,0 +1,3466 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Jasmin Reference Document by Ji, Yong-Hyeon
+% References: https://github.com/jasmin-lang/jasmin/wiki
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[11pt,a4paper]{report}
+\input{#preambles/package}
+\input{#preambles/listings}
+
+% Options for packages loaded elsewhere
+%\PassOptionsToPackage{unicode}{hyperref}
+%\PassOptionsToPackage{hyphens}{url}
+
+%\usepackage{lmodern}
+%\usepackage{amssymb,amsmath}
+%\usepackage{ifxetex,ifluatex}
+%\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+%  \usepackage[T1]{fontenc}
+%  \usepackage[utf8]{inputenc}
+%  \usepackage{textcomp} % provide euro and other symbols
+%\else % if luatex or xetex
+%  \usepackage{unicode-math}
+%  \defaultfontfeatures{Scale=MatchLowercase}
+%  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+%\fi
+%% Use upquote if available, for straight quotes in verbatim environments
+%\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+%\IfFileExists{microtype.sty}{% use microtype if available
+%  \usepackage[]{microtype}
+%  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+%}{}
+%\makeatletter
+%\@ifundefined{KOMAClassName}{% if non-KOMA class
+%  \IfFileExists{parskip.sty}{%
+%    \usepackage{parskip}
+%  }{% else
+%    \setlength{\parindent}{0pt}
+%    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+%}{% if KOMA class
+%  \KOMAoptions{parskip=half}}
+%\makeatother
+%\usepackage{xcolor}
+%\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+%\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+
+
+
+%\hypersetup{
+%  hidelinks,
+%  pdfcreator={LaTeX via pandoc}}
+%\urlstyle{same} % disable monospaced font for URLs
+%\usepackage{longtable,booktabs}
+%% Correct order of tables after \paragraph or \subparagraph
+%\usepackage{etoolbox}
+%\makeatletter
+%\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+%\makeatother
+%% Allow footnotes in longtable head/foot
+%\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+%\makesavenoteenv{longtable}
+%\usepackage{graphicx}
+%\makeatletter
+%\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+%\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+%\makeatother
+%% Scale images if necessary, so that they will not overflow the page
+%% margins by default, and it is still possible to overwrite the defaults
+%% using explicit options in \includegraphics[width, height, ...]{}
+%\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+%% Set default figure placement to htbp
+%\makeatletter
+%\def\fps@figure{htbp}
+%\makeatother
+%\setlength{\emergencystretch}{3em} % prevent overfull lines
+%\providecommand{\tightlist}{%
+%  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+%\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+%
+%\author{}
+%\date{}
+%
+
+%-------------------------
+% Fonts
+%-------------------------
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{newpxtext,newpxmath}
+\usepackage{sectsty}
+
+%-------------------------
+% Header & Footer Settings
+%-------------------------
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\leftmark}
+\fancyhead[R]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\usepackage{background}
+\backgroundsetup{
+	scale=1,  % Scale the image to fit the page
+	color=black,  % Keep the image color as is
+	opacity=.1,  % Fully opaque background
+	angle=0,  % No rotation
+	%	position=current page.south,  % Align to bottom of the page
+	vshift=1cm,  % Adjust vertical alignment if needed
+	%	hshift=0cm,  % Adjust horizontal alignment if needed
+	contents={}
+}
+\newcommand{\setPageBackground}{
+	\backgroundsetup{
+		contents={\includegraphics[scale=4]{images/school-logo}
+			} % Replace with your image
+		}
+	}
+
+% Define a rule command for the cover page
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+\begin{document}
+\begin{titlepage}
+	\setPageBackground
+	\centering
+	\vspace*{1cm}
+	
+	% Company logo (optional)
+	%		\includegraphics[width=0.3\textwidth]{logo.png}\par\vspace{1cm}
+	
+	\HRule \\[0.4cm]
+	{\Huge \sffamily \bfseries Jasmin: Language Reference}\\[0.4cm]
+	\HRule \\[1.5cm]
+	
+	{\Large Language Guild Documentation}\\[0.5cm]
+	{\normalsize Formal Verification \& Implementation Standards}\\[2cm]
+	
+	\begin{flushright}
+		\LARGE {\bfseries Ji, Yong-hyeon} \\ 
+		{\Large\texttt{hacker3740@kookmin.ac.kr}} \\[1.5cm]
+		\large Department of Cyber Security \\
+		Kookmin University \\ [1cm]
+		\today
+	\end{flushright}
+	\vfill
+\end{titlepage}
+
+%-------------------------
+% Table of Contents
+%-------------------------
+{
+\setcounter{tocdepth}{2}
+\tableofcontents
+}
+\clearpage	
+
+\chapter{A}
+\hypertarget{about-jasmin}{%
+\section{About Jasmin}\label{about-jasmin}}
+\input{A/about-jasmin}
+
+\newpage
+\hypertarget{arrays-in-jasmin-programs}{%
+\section{Arrays in Jasmin programs}\label{arrays-in-jasmin-programs}}
+\input{A/arrays-in-jasmin-programs}
+
+
+%\emph{Caveat: this description applies to Jasmin versions 2022.04.0 and
+%more recent}
+%
+%\hypertarget{declaration}{%
+%\subsection{Declaration}\label{declaration}}
+%
+%Arrays may be allocated in registers, in the stack, or in global memory
+%(i.e., in the code segment, which is immutable). A declaration of
+%(local) array variables has the following shape:
+%
+%\begin{verbatim}
+%stack u64[5] a b c;
+%\end{verbatim}
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  storage class (\texttt{reg}, \texttt{stack}, \texttt{reg\ ptr} or
+%  \texttt{stack\ ptr});
+%\item
+%  type of the elements;
+%\item
+%  number of elements, between square brackets;
+%\item
+%  variable names.
+%\end{itemize}
+
+
+
+%\hypertarget{access}{%
+%\subsection{Access}\label{access}}
+%
+%The common way to access (read or write) an array cell is to use
+%indexing, as in \texttt{a{[}3{]}} meaning ``access the fourth element of
+%array~\texttt{a}''.
+%
+%The first element has index zero.
+%
+%Indexes into register arrays should be statically known (after inlining,
+%unrolling, and constant propagation). Otherwise compilation fails.
+%Indeed, each array cell is allocated to a specific (named) register.
+%
+%Arrays that are in memory (stack or global) may be indexed by run-time
+%values (i.e., values that are not statically known). Such an index may
+%be stored in a register as a machine word; it must be syntactically cast
+%into an integer:
+%
+%\begin{verbatim}
+%reg u64 r i;
+%stack u64[4] a;
+%…
+%r = a[i];
+%\end{verbatim}
+%
+%\hypertarget{explicit-scaling}{%
+%\subsubsection{Explicit scaling}\label{explicit-scaling}}
+%
+%When computing the address of an array element, the index is
+%\emph{implicitly} scaled by the declared sized of the elements in the
+%array. Consider for instance the following snippet:
+%
+%\begin{verbatim}
+%stack u64[4] a;
+%a[3] = 1;
+%\end{verbatim}
+%
+%The second line accesses the 64 bits in memory at offset 3 × 8 after the
+%beginning of the array~\texttt{a}. Indeed, according to the declared
+%type of the array, each element is 8~bytes wide, therefore the fourth
+%elements starts at offset~24. If the index is statically known, scaling
+%is computed at compile-time.
+%
+%The Jasmin language allows to disable the implicit scaling through the
+%following syntax for direct access (i.e., not scaled):
+%
+%\begin{verbatim}
+%a.[24] = 1;
+%\end{verbatim}
+%
+%Notice the dot before the opening square bracket.
+%
+%This feature is specially useful when the instruction set does not
+%provide the addressing mode with appropriate scaling. For instance, on
+%x86-64, scales may only be 1, 2, 4, or 8: arrays of elements that are
+%128-bit wide (or more) cannot be accessed using run-time indices that
+%are implicitly scaled. In the following snippet, the first array access
+%is rejected (``invalid scale'') thus the second form must be used (with
+%explicit scaling, done as a separate instruction):
+%
+%\begin{verbatim}
+%stack u128[2] b;
+%reg u64 i;
+%reg u128 x;
+%…
+%x = b[i]; // rejected: invalid scale
+%i <<= 4;
+%x = b.[i];
+%\end{verbatim}
+
+%\hypertarget{type-punning}{%
+%\subsubsection{Type punning}\label{type-punning}}
+%
+%Arrays that are in memory are in fact just a plain sequence of
+%contiguous bytes, of some total byte size. During the lifetime of an
+%array, this byte sequence might be seen in several ways: as an array of
+%\texttt{u8}, or an array of \texttt{u16} (if the byte size is even), and
+%so on. The type chosen at declaration time gives the default view: an
+%expression \texttt{a{[}i{]}} means: ``access to the \emph{element} at
+%position \texttt{i} in array~\texttt{a}, according to its declared
+%type''.
+%
+%But on every access, one may use a different view. For instance, the
+%expression \texttt{a{[}u128\ 0{]}} represents an access to the first
+%element of array~\texttt{a} seen as an array of 128-bit values.
+%
+%The type written after the left bracket tells the type of the elements
+%of the array for this access. It is also the type of the value being
+%read or written through said access.
+%
+%This facility may be used with run-time indices (\texttt{a{[}u16\ i{]}})
+%and with explicit scaling (\texttt{a.{[}u128\ i{]}}).
+%
+%\hypertarget{intuition-about-reg-ptr-and-stack-ptr}{%
+%\subsection{\texorpdfstring{Intuition about \texttt{reg\ ptr} and
+%\texttt{stack\ ptr}}{Intuition about reg ptr and stack ptr}}\label{intuition-about-reg-ptr-and-stack-ptr}}
+%
+%A \texttt{reg\ ptr} is morally a pointer, and it will be compiled into
+%one. In C, if you declare a pointer (e.g.~\texttt{int*\ p;}) and you
+%write to it (e.g.~\texttt{*p\ =\ 4;}) without initializing it, you don't
+%know where you write and you will probably get a runtime error.
+%Likewise, in Jasmin, if you define a \texttt{reg\ ptr}
+%(e.g.~\texttt{reg\ ptr\ u64{[}2{]}\ r;}) and write to it
+%(e.g.~\texttt{r{[}i{]}\ =\ 4}) without initializing it (e.g.~with
+%\texttt{r\ =\ t}, where \texttt{t} can be a \texttt{stack} array,
+%another \texttt{reg\ ptr} or a \texttt{stack\ ptr}), this does not make
+%sense and the compiler will refuse to compile.
+%
+%There are two cases where \texttt{reg\ ptr} play an important role. -
+%Accessing a global array: accessing a cell of a global array is not
+%always possible directly. An intermediate \texttt{reg\ ptr} may be
+%needed. Instead of writing \texttt{g{[}i{]}}, you have to introduce
+%\texttt{reg\ ptr\ u64{[}N{]}\ r;\ r\ =\ g;} (with the appropriate
+%\texttt{N}) and use \texttt{r{[}i{]}} instead. - Argument passing:
+%strictly speaking, it is not possible to pass a stack array to a
+%function. What is possible is to pass the address of the array, and this
+%is precisely the role of a \texttt{reg\ ptr}. Instead of calling
+%\texttt{f(s)}, you may introduce
+%\texttt{reg\ ptr\ u64{[}N{]}\ r;\ r\ =\ s;} (with the appropriate
+%\texttt{N}) and use \texttt{f(r)} instead. You \emph{may}, you do not
+%have to, because there is actually a pass in the compiler that will
+%automatically do this transformation for you, so you can stick to the
+%simple \texttt{f(s)} in most scenarios (this pass will introduce a
+%\texttt{reg\ ptr} per call; if this is not what you want, you have to
+%introduce the \texttt{reg\ ptr} manually).
+%
+%A \texttt{stack\ ptr} is useful only to spill a \texttt{reg\ ptr},
+%i.e.~temporarily store the pointer in the stack. All you can do with a
+%\texttt{stack\ ptr} is copy a \texttt{reg\ ptr} into it or copy it into
+%a \texttt{reg\ ptr}. For instance
+%
+%\begin{verbatim}
+%stack u64[2] s;
+%reg ptr u64[2] r;
+%stack ptr u64[2] sp;
+%
+%r = s;    // r is compiled into a register holding the address of s
+%sp = r;   // the address is copied in the stack, the register can be used for other purposes
+%...       // other code not using r
+%r = sp;   // the address is put back into a register
+%...       // r can be used again
+%\end{verbatim}
+%
+%\hypertarget{compile-a-jasmin-library-to-assembly}{%
+%\section{Compile a Jasmin library to
+%assembly}\label{compile-a-jasmin-library-to-assembly}}
+%
+%\begin{itemize}
+%\item
+%  Output to the terminal
+%
+%\begin{verbatim}
+%jasminc -pasm source.jazz
+%\end{verbatim}
+%\item
+%  Output to a file \texttt{target.s}
+%
+%\begin{verbatim}
+%jasminc -o target.s source.jazz
+%\end{verbatim}
+%\end{itemize}
+%
+%See also: {[}{[}Compilation to assembly{]}{]}
+%
+%\hypertarget{verify-the-safety-of-a-jasmin-library}{%
+%\section{Verify the safety of a Jasmin
+%library}\label{verify-the-safety-of-a-jasmin-library}}
+%
+%\begin{verbatim}
+%jasminc -checksafety source.jazz
+%\end{verbatim}
+%
+%See also: {[}{[}Safety checker{]}{]}
+%
+%\hypertarget{generate-an-easycrypt-model-for-functional-verification-of-a-jasmin-function}{%
+%\section{Generate an EasyCrypt model for functional verification of a
+%Jasmin
+%function}\label{generate-an-easycrypt-model-for-functional-verification-of-a-jasmin-function}}
+%
+%\begin{verbatim}
+%jasminc -ec f -oec model.ec source.jazz
+%\end{verbatim}
+%
+%See also: {[}{[}Extraction to EasyCrypt{]}{]}
+%
+%\hypertarget{generate-an-easycrypt-model-for-constant-time-verification-of-a-jasmin-function}{%
+%\section{Generate an EasyCrypt model for constant-time verification of a
+%Jasmin
+%function}\label{generate-an-easycrypt-model-for-constant-time-verification-of-a-jasmin-function}}
+%
+%\begin{verbatim}
+%jasminc -CT -ec f -oec model.ec source.jazz
+%\end{verbatim}
+%
+%See also: {[}{[}Extraction for checking cryptographic constant
+%time\textbar Extraction to
+%EasyCrypt\#extraction-for-checking-cryptographic-constant-time{]}{]}
+%
+%Here are the different compilation passes performed by the Jasmin
+%compiler.
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  {[}{[}Array-copy{]}{]} expands \texttt{\#copy} operations into
+%  explicit \texttt{for} loops
+%\item
+%  {[}{[}Array-init{]}{]} inserts array-init instructions at the
+%  beginning of functions
+%\item
+%  {[}{[}Function inlining{]}{]} inlines calls to \texttt{inline}
+%  functions and some other
+%\item
+%  {[}{[}Removal of unused functions{]}{]} removes \texttt{inline}
+%  functions that are never called
+%\item
+%  {[}{[}Loop unrolling{]}{]}
+%\item
+%  {[}{[}Constant propagation{]}{]}
+%\item
+%  {[}{[}Dead-code elimination{]}{]}
+%\item
+%  {[}{[}Renaming{]}{]} renames variables to remove copies added in the
+%  previous passes (inlining, unrolling)
+%\item
+%  {[}{[}Array-init{]}{]} removes array-init instructions
+%\item
+%  {[}{[}Expansion of register arrays{]}{]} makes each cell of reg arrays
+%  an independent variable
+%\item
+%  {[}{[}Remove global{]}{]} turn \texttt{global} local variables into
+%  proper global values
+%\item
+%  {[}{[}Make ref arguments{]}{]} inserts \texttt{ptr} intermediate
+%  variables for function arguments and returned values
+%\item
+%  {[}{[}Instruction selection{]}{]} aka lowering
+%\item
+%  {[}{[}Propagate inline{]}{]} propagation of expressions made of flags
+%\item
+%  {[}\protect\hyperlink{stack-allocation}{Stack allocation}{]}
+%\item
+%  {[}{[}Remove unused returned values{]}{]} changes the signature of
+%  functions to return less values
+%\item
+%  {[}\protect\hyperlink{register-allocation}{Register allocation}{]}
+%  solves NP-hard problems in polynomial time, might fail unexpectedly
+%\item
+%  {[}{[}Merge varmaps{]}{]} check that compilation can proceed
+%\item
+%  {[}\protect\hyperlink{linearization}{Linearization}{]} explicit code
+%  for handling the stack and function arguments, labels \& gotos
+%\item
+%  {[}{[}Tunelling{]}{]}
+%\item
+%  {[}{[}ASM generation{]}{]}
+%\end{itemize}
+%
+%\hypertarget{how-to-compile-a-jasmin-program-to-assembly}{%
+%\section{How to compile a Jasmin program to
+%assembly}\label{how-to-compile-a-jasmin-program-to-assembly}}
+%
+%The \texttt{jasminc} program takes as argument (on the command line) the
+%name of a Jasmin source file to compile. The default behavior is to
+%discard the result of the compilation.
+%
+%When the \texttt{-pasm} command-line flag is given, the generated
+%assembly code is printed to the standard output.
+%
+%When the \texttt{-o\ asmFileName} option is given (where
+%\texttt{asmFileName} is a valid file name of your choice), the generated
+%assembly is written to that file.
+%
+%The assembly program is ready to be consumed by common assemblers, such
+%as the GNU assembler.
+%
+%\hypertarget{constant-time-programming}{%
+%\subsection{Constant-time programming}\label{constant-time-programming}}
+%
+%A program is said to be
+%\href{https://bearssl.org/constanttime.html}{constant-time} when neither
+%the control-flow (in particular conditions of if-then-else blocks and
+%while loops) nor the memory accesses (the memory addresses that are read
+%or written) depend on sensitive data (aka secrets).
+%
+%\hypertarget{verification-methodology}{%
+%\subsection{Verification methodology}\label{verification-methodology}}
+%
+%The adversary power (what can be observed through side-channel attacks)
+%is described through a program instrumentation: a global variable
+%\texttt{leakages} accumulates the data that may leak to the adversary.
+%The goal is then to prove that when executing the instrumented program,
+%the final value of the \texttt{leakages} variable does not contain any
+%sensitive information Constant-time is a non-interference property; it
+%can be stated as follows: when executing the program twice with the same
+%public inputs (but private inputs may differ), the leaked data is the
+%same. Initial states that agree on public inputs are often said to be
+%\emph{low-equivalent}.
+%
+%The EasyCrypt proof assistant is usually powerful enough to
+%automatically prove the constant-time property. Moreover, it can be used
+%to infer a correct precondition (and hopefully weak), i.e., what inputs
+%must be public for the constant-time property to hold.
+%
+%In a nutshell, the proof that a Jasmin program is constant-time can be
+%done in the following steps:
+%
+%\begin{enumerate}
+%\def\labelenumi{\arabic{enumi}.}
+%\setcounter{enumi}{-1}
+%\tightlist
+%\item
+%  Ensure that the program is safe
+%\item
+%  Extract to EasyCrypt with explicit leakage
+%\item
+%  State the non-interference property
+%\item
+%  Prove the theorem
+%\end{enumerate}
+%
+%\hypertarget{example}{%
+%\subsection{Example}\label{example}}
+%
+%To illustrate the methodology, let's consider a reference implementation
+%of the Gimli permutation (to be found in
+%\href{https://github.com/jasmin-lang/jasmin/blob/master/compiler/examples/gimli/gimli.jazz}{compiler/examples/gimli/gimli.jazz}):
+%
+%%\begin{verbatim}
+%%inline
+%%fn rotate (reg u32 x, inline int bits) -> reg u32 {
+%%  _, _, x = #ROL_32(x, bits);
+%%  return x;
+%%}
+%%
+%%export
+%%fn gimli(reg u64 state) {
+%%  inline int round column;
+%%  reg u32 x y z a b c;
+%%
+%%  for round = 24 downto 0 {
+%%    for column = 0 to 4 {
+%%      x = (u32)[state + 4 * column];
+%%      x = rotate(x, 24);
+%%      y = (u32)[state + 4 * (4 + column)];
+%%      y = rotate(y, 9);
+%%      z = (u32)[state + 4 * (8 + column)];
+%%
+%%      a = x;
+%%      b = z; b <<= 1;
+%%      c = y; c &= z; c <<= 2;
+%%      a ^= b; a ^= c;
+%%
+%%      (u32)[state + 4 * (8 + column)] = a;
+%%
+%%      a = y;
+%%      b = x; b |= z; b <<= 1;
+%%      a ^= x; a ^= b;
+%%
+%%      (u32)[state + 4 * (4 + column)] = a;
+%%
+%%      a = z;
+%%      b = x; b &= y; b <<= 3;
+%%      a ^= y; a ^= b;
+%%
+%%      (u32)[state + 4 * column] = a;
+%%    }
+%%
+%%    if (round % 4) == 0 { // small swap: pattern s...s...s... etc.
+%%      x = (u32)[state + 4 * 0];
+%%      y = (u32)[state + 4 * 1];
+%%      (u32)[state + 4 * 0] = y;
+%%      (u32)[state + 4 * 1] = x;
+%%
+%%      x = (u32)[state + 4 * 2];
+%%      y = (u32)[state + 4 * 3];
+%%      (u32)[state + 4 * 2] = y;
+%%      (u32)[state + 4 * 3] = x;
+%%    }
+%%
+%%    if (round % 4) == 2 { // big swap: pattern ..S...S...S. etc.
+%%      x = (u32)[state + 4 * 0];
+%%      y = (u32)[state + 4 * 2];
+%%      (u32)[state + 4 * 0] = y;
+%%      (u32)[state + 4 * 2] = x;
+%%
+%%      x = (u32)[state + 4 * 1];
+%%      y = (u32)[state + 4 * 3];
+%%      (u32)[state + 4 * 1] = y;
+%%      (u32)[state + 4 * 3] = x;
+%%    }
+%%
+%%    if (round % 4) == 0 { // add constant: pattern c...c...c... etc.
+%%      (u32)[state + 4 * 0] ^= 0x9e377900 + round;
+%%    }
+%%  }
+%%}
+%%\end{verbatim}
+%
+%This program is safe, as long as the \texttt{state} argument points to a
+%valid memory region of at least 48~bytes, aligned for 32-bit accesses.
+%This is automatically proved by the safety checker, called as follows:
+%
+%\begin{verbatim}
+%jasminc -checksafety gimli.jazz
+%\end{verbatim}
+%
+%The EasyCrypt model for constant-time verification can be obtained by
+%calling the compiler as follows:
+%
+%\begin{verbatim}
+%jasminc -CT -ec gimli -oec gimli_ct.ec gimli.jazz
+%\end{verbatim}
+%
+%This produces an EasyCrypt file \texttt{gimli\_ct.ec} that looks like
+%what follows.
+%
+%\begin{verbatim}
+%module M = {
+%  var leakages : leakages_t
+%
+%  proc rotate (x:W32.t, bits:int) : W32.t = {
+%    (* … *)
+%  }
+%
+%  proc gimli (state:W64.t) : unit = {
+%    (* … *)
+%    var round:int;
+%
+%    leakages <- LeakFor(0,24) :: LeakAddr([]) :: leakages;
+%    round <- 0;
+%    (* … *)
+%    return ();
+%  }
+%}.
+%\end{verbatim}
+%
+%There is a module \texttt{M} with its variable \texttt{leakages} and a
+%model of each function. Each operation that may leak some data has been
+%instrumented to update that variable, as can be seen at the beginning of
+%the \texttt{gimli} function whose first instruction is a \texttt{for}
+%loop.
+%
+%Now the constant-time property of the \texttt{gimli} function can be
+%(manually) stated. In a fresh file, the generated \texttt{Gimli\_ct}
+%module is first required, and the property stated using pRHL as follows.
+%Notice the (wrong) first attempt.
+%
+%\begin{verbatim}
+%require Gimli_ct.
+%
+%(* Shorten the variable names *)
+%import var Gimli_ct.M.
+%
+%(* Wrong statement; the interactive proof script can be used to infer a sufficient pre-condition *)
+%equiv gimli_ct :
+%  Gimli_ct.M.gimli ~ Gimli_ct.M.gimli :
+% true ==> ={leakages}.
+%proof. proc; inline *; sim. abort.
+%
+%(* Correct statetement, trivial proof script. *)
+%equiv gimli_ct :
+%  Gimli_ct.M.gimli ~ Gimli_ct.M.gimli :
+%  ={leakages, state} ==> ={leakages}.
+%proof. proc; inline *; sim. qed.
+%\end{verbatim}
+%
+%The final (proved) statement says that if the leaked data can only be
+%influenced by the address initially given through the \texttt{state}
+%argument (and by nothing else, in particular the actual state --- what
+%is stored at the \texttt{state} address --- has no influence on the
+%leakage).
+%
+%\hypertarget{sct-checker-annotations}{%
+%\subsection{SCT-checker annotations}\label{sct-checker-annotations}}
+%
+%The SCT-checker accepts ``sct'' annotation for functions. The value of
+%this annotation is a security signature for the function. Said signature
+%gives the security type of each argument and returned value.
+%
+%A security level is made of two components: one for normal, correctly
+%speculated executions (this component is labelled with ``normal'' or
+%``n''); the other component for mis-speculated executions (it is
+%labelled with ``speculative'' or ``s''). Each component is one of:
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  ``public''
+%\item
+%  ``secret''
+%\item
+%  an arbitrary identifier
+%\end{itemize}
+%
+%There are a few notational shortcuts:
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  ``transient'' denotes the level \{ normal: public, speculative: secret
+%  \}
+%\item
+%  a lone component x denotes the pair \{ n: x, s: x \}
+%\end{itemize}
+%
+%A type for non-ptr variables is just a level or the special name
+%``msf''. A type for a ptr variable is made of two levels: one for the
+%value (i.e., the array), the other one for the reference (aka the
+%pointer) which may become transient when unspilled from memory.
+%
+%The msf type qualifies values that are public in all executions (i.e.,
+%\{n: public, s: public\}) and correctly reflect the mis-speculation
+%state of the micro-architecture.
+%
+%Poor's man lexical highlighting in Emacs can be achieved by the
+%following command in your \texttt{.emacs}:
+%
+%\begin{verbatim}
+%  ;; Jasmin
+%  (require 'generic-x)
+%  (define-generic-mode
+%      'jasmin-mode ; name
+%    '("//" ("/*" . "*/")) ; comments
+%    '("param" "fn" "inline" "export" "reg" "stack" "global" "int" "bool" "u8" "u16" "u32" "u64" "u128" "u256"
+%      "from" "require"
+%      "return" "ptr" "const" "mut"
+%      "while" "for" "to" "downto") ; keywords
+%    '(("#\\(if\\(def\\)?\\|else\\|endif\\).*$" . 'font-lock-preprocessor-face)
+%      ("\\(if\\|else\\)" . 'font-lock-keyword-face)
+%      ("#[a-zA-Z_][a-zA-Z_0-9]*" . 'font-lock-builtin-face)
+%      ("\\b[0-9]+\\b" . 'font-lock-constant-face)
+%      ); font-lock
+%    '("\\.jazz$" "\\.japp$" "\\.jinc$"); file names
+%    '()
+%    "Not A Jasmin Mode"
+%    )
+%\end{verbatim}
+%
+%\hypertarget{expressions}{%
+%\section{Expressions}\label{expressions}}
+%
+%At source level, Jasmin program contain expressions whose concrete
+%syntax is described below.
+%
+%Expressions are made of:
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  constants (\texttt{true}, \texttt{false}, \texttt{42},
+%  \texttt{0xabcd});
+%\item
+%  packs (\texttt{(4u2){[}0,\ 3,\ 2,\ 1{]}});
+%\item
+%  variables (\texttt{x});
+%\item
+%  parenthesized subexpressions (\texttt{(e)});
+%\item
+%  memory loads (\texttt{(u16){[}p\ +\ 2\ *\ i{]}});
+%\item
+%  array accesses (\texttt{x{[}i{]}});
+%\item
+%  unary operators (`- e`);
+%\item
+%  binary operators (\texttt{e\ -\ f});
+%\item
+%  conditional expressions (\texttt{c\ ?\ th\ :\ el});
+%\item
+%  function calls (\texttt{f(x,\ y)});
+%\item
+%  primitive instructions \texttt{(\#copy\_32(t)}).
+%\end{itemize}
+%
+%\hypertarget{operators}{%
+%\subsection{Operators}\label{operators}}
+%
+%Unary operators are, by decreasing precedence:
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  zero- or sign-extension (\texttt{(16s)e});
+%\item
+%  boolean / bitwise negation (\texttt{!\ b});
+%\item
+%  opposite (`- e`).
+%\end{itemize}
+%
+%Binary operators are, by decreasing precedence:
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  multiplication (\texttt{x\ *\ y}), division (\texttt{x\ /\ y}), and
+%  remainder (\texttt{x\ \%\ y});
+%\item
+%  addition (\texttt{x\ +\ y}) and subtraction (\texttt{x\ -\ y});
+%\item
+%  shifts (\texttt{x\ \textless{}\textless{}\ y};
+%  \texttt{x\ \textgreater{}\textgreater{}s\ y}) and rotations
+%  (\texttt{x\ \textless{}\textless{}r\ y};
+%  \texttt{x\ \textgreater{}\textgreater{}r\ y});
+%\item
+%  bitwise and (\texttt{x\ \&\ y});
+%\item
+%  bitwise exclusive or (\texttt{x\ \^{}\ y});
+%\item
+%  bitwise or (\texttt{x\ \textbar{}\ y});
+%\item
+%  comparisons (\texttt{x\ \textless{}\ y};
+%  \texttt{x\ \textgreater{}=\ y});
+%\item
+%  equality test (\texttt{x\ ==\ y}; \texttt{x\ !=\ y});
+%\item
+%  boolean conjunction (\texttt{b\ \&\&\ c});
+%\item
+%  boolean disjunction (\texttt{b\ \textbar{}\textbar{}\ c}).
+%\end{itemize}
+%
+%Note that most operators accept as suffix a size annotation. For
+%instance \texttt{+32u} is the 32-bit (unsigned) addition and
+%\texttt{+8u16} is the parallel 16-bit (unsigned) addition for vectors of
+%8 elements (i.e., 128 bit). Said annotation can be limited to a sign
+%annotation, for instance \texttt{\textgreater{}\textgreater{}u} is the
+%\emph{logical} right shift whereas
+%\texttt{\textgreater{}\textgreater{}s} is the \emph{arithmetic} right
+%shift.
+%
+%The Jasmin compiler is formally proven in Coq, this means that we have a
+%formal proof ensuring that it preserves the semantics of safe programs.
+%But how can we prove that a source Jasmin program satisfies properties
+%that will be preserved by the compiler? To that end, the compiler allows
+%to extract Jasmin program to an equivalent EasyCrypt model. This
+%extraction is correct on safe programs. \# Command line for extraction
+%The command to extract EasyCrypt programs is the following:
+%
+%\begin{verbatim}
+%      jasminc -ec funname -oec ecFileName jasminFileName
+%\end{verbatim}
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  \emph{funname} is the name of the Jasmin function to extract, notice
+%  that if \emph{funname} uses other functions they will be extracted as
+%  well. It is possible to provide different functions to extract by
+%  adding more ``-ec'' arguments.
+%\item
+%  \emph{ecFileName} is the EasyCrypt file that will be generated.
+%\item
+%  \emph{jasminFileName} is the name of the Jasmin source file containing
+%  \emph{funname}
+%\end{itemize}
+%
+%\hypertarget{example-1}{%
+%\subsection{Example}\label{example-1}}
+%
+%\hypertarget{extraction-for-checking-cryptographic-constant-time.}{%
+%\section{Extraction for checking cryptographic constant
+%time.}\label{extraction-for-checking-cryptographic-constant-time.}}
+%
+%It is possible to extract a EasyCrypt model allowing that a Jasmin
+%program satisfies the cryptographic constant time property.
+%
+%For this we need to add a -CT argument to the command line.
+%
+%\begin{verbatim}
+%      jasminc -CT -ec funname -oec ecFileName jasminFileName
+%\end{verbatim}
+%
+%For more explanation on how to verify that a program is constant time,
+%see the {[}{[}Constant-time verification{]}{]} page.
+%
+%\hypertarget{configure-easycrypt-to-verify-jasmin-programs}{%
+%\section{Configure EasyCrypt to verify Jasmin
+%programs}\label{configure-easycrypt-to-verify-jasmin-programs}}
+%
+%EasyCrypt models of Jasmin programs may refer to some \texttt{JModel} or
+%\texttt{JWord} modules. These are part of the Jasmin library for
+%EasyCrypt (to be found in the source code of Jasmin).
+%
+%To instruct \texttt{easycrypt} how to find these modules, either use the
+%\texttt{-I\ Jasmin:/path/to/jasmin/easycrypt/} command-line arguments
+%(with the correct path of the directory containing the modules) write a
+%configuration file for EasyCrypt (usually in
+%\texttt{\textasciitilde{}/.config/easycrypt/easycrypt.conf}) with the
+%following contents (with the correct path depending on your local
+%installation of Jasmin):
+%
+%\begin{verbatim}
+%[general]
+%idirs=Jasmin:~/.nix-profile/lib/jasmin/easycrypt/
+%\end{verbatim}
+%
+%\hypertarget{faq}{%
+%\section{FAQ}\label{faq}}
+%
+%\hypertarget{how-to-debug-compilation-errors}{%
+%\subsection{How to debug compilation
+%errors?}\label{how-to-debug-compilation-errors}}
+%
+%\hypertarget{register-allocation}{%
+%\subsubsection{Register allocation}\label{register-allocation}}
+%
+%\begin{quote}
+%register allocation: no more register to allocate `` ra.357''
+%\end{quote}
+%
+%This message says that there are no free registers for storing the
+%return address of some function (its name is a white space followed by
+%\texttt{ra}). Which function? With the command-line flag \texttt{-debug}
+%on, the compiler will output the required information (\texttt{grep} for
+%the actual name of the variable to filter the too verbose output).
+%
+%There are two possible kinds of fix to this kind of issue: either spill
+%some registers to ensure there is at least one register that is free at
+%\emph{all} call sites; or change the calling-convention of the function
+%so that return address is passed on the stack (this can be achieved
+%through the \texttt{\#returnaddress=stack} annotation before the
+%function declaration).
+%
+%\hypertarget{stack-allocation}{%
+%\subsubsection{Stack allocation}\label{stack-allocation}}
+%
+%\begin{quote}
+%no region associated to variable p
+%\end{quote}
+%
+%Here is a minimal program triggering this error:
+%
+%\begin{verbatim}
+%export fn dangling_reference() -> reg u32 {
+%  reg ptr u32[1] p;
+%  p[0] = 0;
+%  reg u32 r;
+%  r = p[0];
+%  return r;
+%}
+%\end{verbatim}
+%
+%The problem comes from the fact that there is no memory allocated to the
+%array: variable \texttt{p} is tagged as \texttt{ptr} so that after
+%compilation the register that corresponds to \texttt{p} only contains a
+%reference (aka a pointer) to the array. One way to solve this issue is
+%to link \texttt{p} to an other array for which there is some allocated
+%memory, for instance with:
+%\texttt{stack\ u32{[}2{]}\ s;\ p\ =\ s{[}1:1{]};}.
+%
+%\hypertarget{linearization}{%
+%\subsubsection{Linearization}\label{linearization}}
+%
+%\begin{quote}
+%assignment remains
+%\end{quote}
+%
+%Assignments (instructions of the form \texttt{d\ =\ e;}) are processed
+%by the various compilation passes, removed (when they become dead) or
+%replaced by target operations (i.e., assembly-level instructions, such
+%as \texttt{rax\ =\ \#MOV(rbx);}). When everything goes well, all
+%assignments are gone before the {[}{[}linearization
+%pass\textbar Linearization{]}{]}.
+%
+%This error message arises when one of the earlier passes could not
+%handle the assignment. Often, the {[}{[}instruction selection
+%pass\textbar Instruction selection{]}{]} could not find in the target
+%instruction set (ISA) an operation matching said assignment. A common
+%work-around is to decompose the assignment into several simpler steps.
+%
+%\hypertarget{how-do-i-set-a-register-to-zero}{%
+%\subsection{How do I set a register to
+%zero?}\label{how-do-i-set-a-register-to-zero}}
+%
+%For setting variables to zero, Jasmin has the special \texttt{\#set0()}
+%intrinsic. For example:
+%
+%\begin{verbatim}
+%reg u64 i;
+%
+%i = #set0();
+%while (i < 256) {
+%    // ...
+%    i += 1;
+%}
+%\end{verbatim}
+%
+%\hypertarget{zulip-chat}{%
+%\subsection{Zulip chat}\label{zulip-chat}}
+%
+%The \href{https://formosa-crypto.zulipchat.com/}{Formosa-Crypto Zulip
+%Chat} is meant for anybody interested in high-assurance cryptography
+%using EasyCrypt, Jasmin, and related tools.
+%
+%\hypertarget{mailing-list}{%
+%\subsection{Mailing list}\label{mailing-list}}
+%
+%The \texttt{jasmin-users} mailing list has been closed in May 2023. \#
+%Jasmin
+%
+%Welcome to the jasmin wiki!
+%
+%\hypertarget{getting-started}{%
+%\subsection{Getting Started}\label{getting-started}}
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  {[}{[}About Jasmin\textbar About{]}{]}
+%\item
+%  {[}{[}Installation instructions{]}{]}
+%\item
+%  {[}{[}Compilation to assembly{]}{]}
+%\item
+%  {[}{[}Get support{]}{]}
+%\item
+%  {[}{[}Pretty printing{]}{]} (export to LaTeX)
+%\end{itemize}
+%
+%\hypertarget{the-jasmin-language}{%
+%\subsection{The Jasmin Language}\label{the-jasmin-language}}
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  {[}{[}Structure of a Jasmin program{]}{]}
+%\item
+%  {[}{[}Arrays{]}{]}
+%\item
+%  {[}{[}Memory Layout{]}{]}
+%\item
+%  {[}\protect\hyperlink{expressions}{Expressions}{]}
+%\end{itemize}
+%
+%\hypertarget{verification-tools}{%
+%\subsection{Verification tools}\label{verification-tools}}
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  {[}{[}Safety checker{]}{]}
+%\item
+%  {[}{[}Extraction to EasyCrypt{]}{]}
+%\item
+%  {[}{[}Constant-time verification{]}{]}
+%\item
+%  {[}{[}Reference interpreter{]}{]} (a.k.a. executable formal semantics)
+%\end{itemize}
+%
+%\hypertarget{bibliography}{%
+%\subsection{Bibliography}\label{bibliography}}
+%
+%\begin{itemize}
+%\item
+%  José Bacelar Almeida, Manuel Barbosa, Gilles Barthe, Benjamin
+%  Grégoire, Adrien Koutsos, Vincent Laporte, Tiago Oliveira, and
+%  Pierre-Yves Strub, ``The Last Mile: High-Assurance and High-Speed
+%  Cryptographic Implementations,'' 2020 IEEE Symposium on Security and
+%  Privacy (SP), San Francisco, CA, USA, 2020, pp.~965-982, doi:
+%  \href{https://doi.org/10.1109/SP40000.2020.00028}{10.1109/SP40000.2020.00028}.
+%\item
+%  José Bacelar Almeida, Cécile Baritel-Ruet, Manuel Barbosa, Gilles
+%  Barthe, François Dupressoir, Benjamin Grégoire, Vincent Laporte, Tiago
+%  Oliveira, Alley Stoughton, and Pierre-Yves Strub. 2019.
+%  Machine-Checked Proofs for Cryptographic Standards:
+%  Indifferentiability of Sponge and Secure High-Assurance
+%  Implementations of SHA-3. In Proceedings of the 2019 ACM SIGSAC
+%  Conference on Computer and Communications Security (CCS '19).
+%  Association for Computing Machinery, New York, NY, USA, 1607--1622.
+%  DOI:\href{https://doi.org/10.1145/3319535.3363211}{10.1145/3319535.3363211}
+%\item
+%  José Bacelar Almeida, Manuel Barbosa, Gilles Barthe, Arthur Blot,
+%  Benjamin Grégoire, Vincent Laporte, Tiago Oliveira, Hugo Pacheco,
+%  Benedikt Schmidt, and Pierre-Yves Strub. 2017. Jasmin: High-Assurance
+%  and High-Speed Cryptography. In Proceedings of the 2017 ACM SIGSAC
+%  Conference on Computer and Communications Security (CCS '17).
+%  Association for Computing Machinery, New York, NY, USA, 1807--1823.
+%  DOI:\href{https://doi.org/10.1145/3133956.3134078}{10.1145/3133956.3134078}
+%\end{itemize}
+%
+%\hypertarget{information-for-developers}{%
+%\subsection{Information for
+%developers}\label{information-for-developers}}
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  {[}{[}How to add intrinsics\textbar Howto-Add-Instructions{]}{]}
+%\item
+%  {[}{[}Current branches in the git repository\textbar Branches{]}{]}
+%\item
+%  {[}{[}Continuous Integration\textbar CI-on-gitlab{]}{]}
+%\end{itemize}
+%
+%\hypertarget{how-to-add-new-instructions}{%
+%\section{How to add new
+%instructions}\label{how-to-add-new-instructions}}
+%
+%This is a brief overview of the process of adding support for new
+%``intrinsics'' into the Jasmin language and compiler.
+%
+%\hypertarget{write-unit-tests}{%
+%\subsection{Write unit tests}\label{write-unit-tests}}
+%
+%This clarifies the concrete syntax and what are the possible variants of
+%the new instruction. For instance, the \texttt{VPMULHRS} intrinsic can
+%operate on 128-bit vectors or 256-bit vectors; in both cases, it treats
+%them as vectors of 16-bit values; it therefore supports two suffixes,
+%\texttt{\_8u16} and \texttt{\_16u16}.
+%
+%\hypertarget{update-the-abstract-syntax}{%
+%\subsection{Update the abstract
+%syntax}\label{update-the-abstract-syntax}}
+%
+%The \texttt{asm\_op} datatype (in file
+%\texttt{proof/compiler/x86\_instr\_decl.v}) lists all supported
+%instructions. Add a variant to this datatype for each intrinsic. Values
+%in this type are often parameterized by a \texttt{wsize} argument (the
+%size of the values it manipulates); vector instructions are often
+%additionally parameterized by a \texttt{velem} argument (the size of the
+%elements in the vectors).
+%
+%\hypertarget{define-the-semantics}{%
+%\subsection{Define the semantics}\label{define-the-semantics}}
+%
+%Define the semantics for the instruction when applied to well-typed
+%value, as a total function. This usually relies on machine-word
+%operations that must be additionally defined in the
+%\texttt{proof/lang/word.v} file.
+%
+%\hypertarget{write-the-descriptor}{%
+%\subsection{Write the descriptor}\label{write-the-descriptor}}
+%
+%The instruction descriptor gathers information about the intrinsics:
+%syntax (to parse and pretty-print), semantics, calling-convention, valid
+%ranges for immediate arguments (if any), etc. There are a few notations
+%available to ease the definitions of such descriptors. The usual way to
+%define a new descriptor is to copy and adapt the descriptor for an
+%instruction that has similar constraints.
+%
+%Add this descriptor to the \texttt{instr\_desc} function that maps
+%instructions from the abstract syntax to their descriptor (for semantics
+%and compilation) and to the \texttt{prim\_string} association list that
+%maps mnemonics to abstract syntax (for parsing and type-checking).
+%
+%\hypertarget{optionally-add-easycrypt-support}{%
+%\subsection{Optionally add EasyCrypt
+%support}\label{optionally-add-easycrypt-support}}
+%
+%The semantics of the added instruction can be defined or axiomatized in
+%the EasyCrypt theory found in the \texttt{eclib/} directory.
+%
+%TL;DR: Run \texttt{nix-env\ -iA\ nixpkgs.jasmin-compiler}
+%(\href{https://nixos.org/}{more info about the nix package manager}), or
+%run \texttt{opam\ install\ jasmin} (\href{https://opam.ocaml.org/}{more
+%info about the opam package manager}).
+%
+%\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+%
+%\hypertarget{debian-packages}{%
+%\subsection{Debian packages}\label{debian-packages}}
+%
+%Debian packages for the Jasmin toolbox and its dependencies are made
+%available on the Formosa Crypto repository. In order to install these
+%packages, you first need to configure \texttt{apt} to use this
+%repository.
+%
+%\begin{enumerate}
+%\def\labelenumi{\arabic{enumi}.}
+%\item
+%  Download and add the signing key
+%
+%  Run as \textbf{root} the following command:
+%
+%\begin{verbatim}
+%wget -qO- https://formosa-crypto.org/formosa-archive-keyring.pgp | gpg --dearmor > /etc/apt/trusted.gpg.d/formosa-crypto.gpg
+%\end{verbatim}
+%\item
+%  Add the package repository to your APT sources.list
+%
+%  Run as \textbf{root} the following command:
+%
+%\begin{verbatim}
+%echo 'deb [signed-by=/etc/apt/trusted.gpg.d/formosa-crypto.gpg] https://repo.formosa-crypto.org/debian bookworm main' > /etc/apt/sources.list.d/formosa-crypto.list
+%\end{verbatim}
+%\item
+%  Get the latest information about the repository contents
+%
+%  Run as \textbf{root} the following command:
+%
+%\begin{verbatim}
+%apt update
+%\end{verbatim}
+%\item
+%  Install the Jasmin package
+%
+%  Run as \textbf{root} the following command:
+%
+%\begin{verbatim}
+%apt install jasmin-compiler
+%\end{verbatim}
+%\end{enumerate}
+%
+%\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+%
+%The Jasmin compiler is written in \href{https://coq.inria.fr}{Coq} and
+%\href{https://ocaml.org/}{OCaml}. It is built in two steps: OCaml code
+%is first extracted from the Coq code then compiled together with the
+%hand-written OCaml code.
+%
+%If you are not interested in using the Coq formalization, you may skip
+%the first step below.
+%
+%\hypertarget{from-the-coq-development}{%
+%\subsection{From the Coq development}\label{from-the-coq-development}}
+%
+%Get the source code from the git repository hosted on
+%\url{https://github.com/jasmin-lang/jasmin/}, for instance the current
+%version of the \texttt{main} branch:
+%\href{https://github.com/jasmin-lang/jasmin/archive/main.tar.gz}{jasmin-main.tar.gz}.
+%
+%\hypertarget{dependencies-of-the-coq-development}{%
+%\subsubsection{Dependencies of the Coq
+%development}\label{dependencies-of-the-coq-development}}
+%
+%The exact set of dependencies can be found in the \texttt{default.nix}
+%file at the root of the git repository.
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  \href{https://coq.inria.fr/}{Coq} at version 8.20
+%\item
+%  The \href{https://math-comp.github.io/}{Mathematical Components}
+%  library, at version 2.2 (only the following sub-libraries are
+%  required: ssreflect, fingroup, algebra)
+%\item
+%  The \href{https://github.com/jasmin-lang/coqword}{mathcomp-word}
+%  library, at version 3.2
+%\end{itemize}
+%
+%\hypertarget{coq-compilation}{%
+%\subsubsection{Coq compilation}\label{coq-compilation}}
+%
+%Once all dependencies are available (which can be achieved by running
+%\texttt{nix-shell} at the root directory), change to the \texttt{proof}
+%directory and run \texttt{make}
+%
+%\hypertarget{extract-the-ocaml-code-from-the-coq-development}{%
+%\subsubsection{Extract the OCaml code from the Coq
+%development}\label{extract-the-ocaml-code-from-the-coq-development}}
+%
+%Change to the \texttt{compiler} directory and run \texttt{make~CIL}
+%
+%\hypertarget{from-ocaml-sources}{%
+%\subsection{From OCaml sources}\label{from-ocaml-sources}}
+%
+%Get the full OCaml source code, either as a result of the extraction
+%process described above, or from the
+%\href{https://gitlab.com/jasmin-lang/jasmin-compiler/}{jasmin-compiler}
+%repository, for instance the current version of the \texttt{main}
+%branch:
+%\href{https://gitlab.com/jasmin-lang/jasmin-compiler/-/archive/main/jasmin-compiler-main.tar.gz}{jasmin-compiler.tar.gz}
+%
+%\hypertarget{dependencies-of-the-ocaml-program}{%
+%\subsubsection{Dependencies of the OCaml
+%program}\label{dependencies-of-the-ocaml-program}}
+%
+%The precise set of dependencies can be found in the \texttt{default.nix}
+%file.
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  \href{https://ocaml.org}{OCaml} at version 4.14, with the following
+%  tools and libraries: menhir, menhirLib, dune, findlib (aka ocamlfind),
+%  apron, camlidl, batteries, cmdliner, zarith, yojson.
+%\item
+%  \href{https://www.mpfr.org/}{MPFR}
+%\item
+%  \href{https://www.bugseng.com/ppl}{PPL}
+%\end{itemize}
+%
+%\hypertarget{ocaml-compilation}{%
+%\subsubsection{OCaml compilation}\label{ocaml-compilation}}
+%
+%Once all dependencies are available (which can be achieved by running
+%\texttt{nix-shell}, either at the root of the source tree --- if there
+%is a \texttt{default.nix} file there --- or within the \texttt{compiler}
+%directory), change to the \texttt{compiler} directory (at the root of
+%the source tree, not inside the \texttt{proof} directory), and run
+%\texttt{make}. This produces a \texttt{jasminc} program (a symbolic link
+%to the actual binary file, that might be moved to a different path; that
+%program is dynamically linked to a few libraries: apron, mpfr, ppl,
+%etc.).
+%
+%At the source level, Jasmin programs only use ``external'' memory that
+%is managed by the calling program. At the end of the compilation, the
+%memory addressing space is shared between this external memory, global
+%(immutable) variables, and local (stack) variables.
+%
+%The layout of global data is undocumented and subject to change.
+%
+%Each function has a stack frame that is allocated at the beginning of
+%the execution of the function and freed at the end of the execution of
+%the function. This memory management is done implicitly in the semantics
+%an Jasmin-stack programs (aka \texttt{sprog}) and explicitly in the code
+%in linear and assembly programs. The code for explicit memory management
+%is in the callee for \texttt{export} functions but in the caller for
+%\texttt{local} functions.
+%
+%Each function stores in its stack frame its own local variables (the
+%ones that are annotated with the \texttt{stack} modifier) but also some
+%extra data: the contents of callee-saved registers (that may be modified
+%during the execution of this function), the original value of the stack
+%pointer and the return address. Therefore each stack frame is split into
+%two disjoint contiguous regions: the \emph{data} part and the
+%\emph{extra} part. The data part is at the bottom (lower addresses) and
+%the extra part at the top (higher addresses). This design allows to
+%simply describe what part of the frame can be accessed by the user code
+%and what part is reserved to the compiler-injected code.
+%
+%Notice that to enforce alignment constraints, some padding may be added
+%between the two parts. Consider for example a function with one byte of
+%local (stack) variable that save the stack pointer into its stack frame.
+%The frame must be aligned for 8-byte accesses (assuming 64-bit pointers)
+%and the slot for the stack pointer similarly. The local variable will
+%thus be allocated at offset zero and the saved stack pointer at offset
+%eight. This means that there are seven \emph{lost} (padding) bytes in
+%the frame whose total size will be 16 bytes. This is the worst possible
+%case so this non-optimal padding should not be a source for concern.
+%
+%Alignment constraints for stack memory accesses are satisfied through
+%three mechanisms. Top-level (\texttt{export}) functions enforce
+%alignment of the stack pointer after the allocation of their frames
+%(through a bit-level \texttt{AND} operation). When allocating the stack
+%frame of a local function, its size is rounded so as to preserve the
+%alignment of the stack pointer. The layout of each stack frame is
+%computed assuming that the lowest address in the frame will be aligned.
+%
+%Therefore there are three kinds of \emph{padding}:
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  initially to align the ``external'' stack pointer (the exact quantity
+%  is statically unknown but bounded by the alignment constraint);
+%\item
+%  internally to each stack frame, between the data and extra parts;
+%  statically known, seven bytes at most;
+%\item
+%  on each (internal) function call to preserve the alignment of the
+%  stack pointer; statically known, bounded by the alignment constraint.
+%\end{itemize}
+%
+%\hypertarget{how-to-pretty-print-a-jasmin-program}{%
+%\section{How to pretty-print a Jasmin
+%program}\label{how-to-pretty-print-a-jasmin-program}}
+%
+%The \texttt{jasmin2tex} tool (distributed with the Jasmin compiler;
+%named \texttt{jazz2tex} before release 2023.06.4) can write LATEX
+%representations of Jasmin programs:
+%
+%\begin{verbatim}
+%jasmin2tex -o output.tex input.jazz
+%\end{verbatim}
+%
+%The produced LATEX snippet is meant to be included in a
+%\texttt{jasmincode} environment provided by the \texttt{jasmin} package
+%defined in the following file:
+%\href{./resources/jasmin.sty}{jasmin.sty}.
+%
+%\hypertarget{how-to-execute-the-formal-semantics}{%
+%\section{How to execute the formal
+%semantics}\label{how-to-execute-the-formal-semantics}}
+%
+%The semantics of the Jasmin programming language is formally defined in
+%Coq, as a big-step inductive relation, is the \texttt{sem} module. An
+%equivalent definition is given as an OCaml recursive function in the
+%\texttt{Evaluator} module.
+%
+%A Jasmin program is a collection of function definitions: it does not
+%make much sense to \emph{execute} such a program. However, the
+%interpreter can execute a call to a function applied to some arguments
+%from some initial memory.
+%
+%The evaluator runs before the compilation and evaluates all
+%\texttt{exec} directives found in the file being compiled (if any). Such
+%a directive starts with the \texttt{exec} keyword, followed by the name
+%of the function to call, followed by a description of the initial memory
+%layout.
+%
+%NB: currently, there is no concrete syntax to describe the function
+%arguments; the function to interpret must have no parameter. However, it
+%is possible to write an auxiliary function that computes the arguments
+%for the function to evaluate.
+%
+%Here is a complete example.
+%
+%\begin{verbatim}
+%param int N = 4;
+%
+%fn zero() -> reg u64[N] {
+%  inline int i;
+%  reg u64[N] t;
+%  for i = 0 to N {
+%    t[i] = i;
+%  }
+%  return t;
+%}
+%
+%exec zero()
+%\end{verbatim}
+%
+%When running the \texttt{jasminc} compiler on this program, the
+%following is displayed on the standard output:
+%
+%\begin{quote}
+%Evaluation of zero (): {[}0; 0; 0; 0; 0; 0; 0; 0; 1; 0; 0; 0; 0; 0; 0;
+%0; 2; 0; 0; 0; 0; 0; 0; 0; 3; 0; 0; 0; 0; 0; 0; 0{]}
+%\end{quote}
+%
+%Notice that the returned result is pretty-printed using hexadecimal
+%numbers, and that arrays are shown as arrays of~\texttt{u8} (this
+%reveals the endianness of the array).
+%
+%\hypertarget{initial-memory-layout}{%
+%\subsection{Initial memory layout}\label{initial-memory-layout}}
+%
+%If the function to evaluate accesses (reads from or writes to) the
+%memory, the interpreter must be run from a state that has enough valid
+%regions.
+%
+%At the end of an \texttt{exec} directive, the parentheses enclose a list
+%of valid address ranges. Ranges are separated by commas~\texttt{,} and
+%are given as a pair \texttt{start-address\ :\ length}.
+%
+%NB: these declared valid regions are not initialized; the function to be
+%evaluated should write the memory before reading it.
+%
+%For instance, the evaluation of the following program displays:
+%``Evaluation of mem (4096:8): FF''.
+%
+%\begin{verbatim}
+%inline
+%fn mem() -> reg u64 {
+%  reg u64 r;
+%  reg u64 p;
+%
+%  p = 0x1000;
+%
+%  [ p + 0] = 255;
+%  r = [ p + 0];
+%
+%  return r;
+%}
+%
+%exec mem (0x1000 : 8)
+%\end{verbatim}
+%
+%The Jasmin compiler comes with a static analyser that attempts to
+%automatically prove the safety of the program to be compiled.
+%
+%To use it, just call the compiler with the \texttt{-checksafety} flag on
+%the command line: it will check the safety of the \emph{export}
+%functions rather than compiling them.
+%
+%Safety is formally defined as ``to have a well defined semantics'',
+%according to the Coq specification that is given in the
+%\texttt{proofs/lang/psem.v} file: a function is safe to call from an
+%initial memory with some arguments whenever there exist a final memory
+%and result values such that running this function from that initial
+%state terminates in that final state.
+%
+%Broadly speaking, safety entails:
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  termination;
+%\item
+%  array accesses are in bounds;
+%\item
+%  memory accesses are valid, i.e., are properly aligned and target
+%  allocated memory;
+%\item
+%  arithmetic operations are applied to valid arguments.
+%\end{itemize}
+%
+%Jasmin functions are usually not \emph{absolutely} safe: it may be
+%possible to find initial states from which the execution is not properly
+%defined. For instance, if a function accesses memory by dereferencing a
+%pointer given as argument, said pointer must target allocated memory.
+%
+%Therefore, the safety checker outputs a \emph{safety precondition}: a
+%property of the initial state (initial memory and arguments) that, when
+%satisfied, ensures that the execution is safe.
+%
+%As an example, we give below the final results we obtained when
+%analysing \texttt{compiler/examples/loop\_add.jazz} and
+%\texttt{compiler/examples/memcmp.jazz}, and explain how to interpret
+%them.
+%
+%\hypertarget{example-loop_add.jazz}{%
+%\subsection{\texorpdfstring{Example:
+%\texttt{loop\_add.jazz}}{Example: loop\_add.jazz}}\label{example-loop_add.jazz}}
+%
+%Assuming we are in the \texttt{compiler/} directory, running
+%\texttt{./jasminc\ -checksafety\ examples/loop\_add.jazz} should yield:
+%
+%%\begin{verbatim}
+%%Default checker parameters.
+%%
+%%Analysing function add16
+%%
+%%*** No Safety Violation
+%%
+%%Memory ranges:
+%%  mem_in: [0; 128]
+%%  
+%%* Rel:
+%%{mem_in ≥ 0, inv_in ≥ 0, mem_in ≤ 128, inv_in ≤ 18446744073709551615}
+%%mem_in ∊ [0; 128]
+%%
+%%* Alignment: in 64;
+%%\end{verbatim}
+%
+%This states that the function is memory safe, assuming that: - the input
+%\texttt{in} points to an allocated memory region of at least 128 bytes;
+%- the \texttt{Rel} part can be ignored here (we detail it in the next
+%example); - the input \texttt{in} must be aligned to 64 bits.
+%
+%\hypertarget{example-memcmp.jazz}{%
+%\subsection{\texorpdfstring{Example:
+%\texttt{memcmp.jazz}}{Example: memcmp.jazz}}\label{example-memcmp.jazz}}
+%
+%The \texttt{memcmp} export function has the signature:
+%
+%\begin{verbatim}
+%export fn memcmp(reg u64 p, reg u64 q, reg u64 n) -> reg u64
+%\end{verbatim}
+%
+%Essentially, it takes two pointers \texttt{p} and \texttt{q} of length
+%\texttt{n}, and compare them. To help the analyser, we can declare which
+%inputs are pointers and which inputs are lengths, which is done through
+%the \texttt{safetyparam} option as follows:
+%
+%\begin{verbatim}
+%./jasminc -checksafety examples/memcmp.jazz -safetyparam "memcmp>p,q;n"
+%\end{verbatim}
+%
+%(pointers and lengths are comma \texttt{,} separated lists of input
+%variables).
+%
+%Running the checker should yield:
+%
+%%\begin{verbatim}
+%%Default checker parameters.
+%%
+%%Analyzing function memcmp
+%%
+%%*** No Safety Violation
+%%
+%%Memory ranges:
+%%  mem_n: [0; 0]
+%%  
+%%* Rel:
+%%{inv_n ≤ 18446744073709551615, 8·inv_n ≥ mem_q, 8·inv_n ≥ mem_p, mem_q ≥ 0, mem_p ≥ 0}
+%%mem_p ∊ [0; 147573952589676412920]
+%%mem_q ∊ [0; 147573952589676412920]
+%%
+%%* Alignment: p 64; q 64; 
+%%\end{verbatim}
+%
+%Here, because the allocated memory regions pointed by \texttt{p} and
+%\texttt{q} are of size depending on the initial value of \texttt{n}, we
+%must check the \texttt{Rel} entry. This entry gives the allocated memory
+%region safety pre-condition through a conjunctions of linear
+%inequalities.
+%
+%For example, we see that \texttt{mem\_q} (the memory region
+%corresponding to input pointer \texttt{q}) is such that:
+%
+%%\begin{verbatim}
+%%0 ≤ mem_q ≤ 8·inv_n
+%%\end{verbatim}
+%
+%Where \texttt{inv\_n} is the initial value of input \texttt{n}. That is,
+%\texttt{q} must point to an allocated memory region of length
+%\texttt{8·n}. \#\# Selective Speculative Load Hardening (DRAFT) ---
+%Jasmin's Selective Speculative Load Hardening is an optimized version of
+%\href{https://llvm.org/docs/SpeculativeLoadHardening.html}{Speculative
+%Load Hardening} mitigation method to protect against
+%\href{https://spectreattack.com/spectre.pdf}{Spectre v1} transient
+%execution attack.
+%
+%\hypertarget{background}{%
+%\subsection{\#\#\# Background}\label{background}}
+%
+%\hypertarget{spectre-v1-bounds-check-bypass-attack-brief}{%
+%\subsubsection{Spectre v1 (Bounds check Bypass) attack
+%{[}brief{]}}\label{spectre-v1-bounds-check-bypass-attack-brief}}
+%
+%Modern CPUs performs some optimizations like speculation on certain
+%program behavior to improve the execution speed. One such speculation is
+%branch prediction, where the CPU will speculate the branch outcome based
+%on heuristics and starts pre-computing the instructions within that
+%branch. When the branch condition is resolved, CPU will compare with its
+%speculation. If the speculation is correct, it will commit the
+%pre-computation results. Else, it will discard. Though these speculation
+%does not violate the program semantics, it modifies the
+%micro-architectural state. The attacker can train and influence the
+%branch predictor and observe these information leak and obtain secret
+%information.
+%
+%Spectre v1 vulnerable \emph{pseudocode} example:
+%
+%\begin{verbatim}
+%if (idx < arrlen) {
+%    // can enter true branch speculatively
+%    // even when idx >= arrlen
+%    idx2 = arr[idx];        // speculative out of bound access
+%    val = arr2[idx2];       // speculative information leak
+%}
+%\end{verbatim}
+%
+%\hypertarget{speculative-load-hardening-slh-simplified}{%
+%\subsubsection{Speculative Load Hardening (SLH)
+%{[}simplified{]}}\label{speculative-load-hardening-slh-simplified}}
+%
+%\href{https://llvm.org/docs/SpeculativeLoadHardening.html\#high-level-mitigation-approach}{SLH}
+%mitigates the Spectre v1 attack by masking the loads(like 0xFFFFFF) when
+%the CPU is misspeculating with the help of branchless code check.
+%
+%SLH protection for the above \emph{pseudocode} example:
+%
+%\begin{verbatim}
+%zeros = 0x00000000;
+%mask = 0xFFFFFFFF;
+%predicate = zeros;
+%
+%if (idx < arrLen) {
+%    // assuming that ternary operator will lower to
+%    // branchless CMOVxx instruction
+%    predicate = (idx < arrLen) ? predicate : mask;
+%    idx2 = arr[idx];
+%    idx2 = idx2 | predicate;    // mask if misspeculating
+%    val = arr2[idx2];           // no speculative information leak
+%}
+%\end{verbatim}
+%
+%\hypertarget{constant-time-programming-1}{%
+%\subsubsection{Constant-Time
+%Programming}\label{constant-time-programming-1}}
+%
+%A program is said to be a Constant-Time program if it follows below
+%rules.
+%
+%\begin{enumerate}
+%\def\labelenumi{\arabic{enumi}.}
+%\tightlist
+%\item
+%  Secrets do no influence the branch condition.
+%\item
+%  Memory access's index is not influenced by secret.
+%\item
+%  Secrets should not influence the execution time of Time-Variable
+%  instructions.
+%\end{enumerate}
+%
+%\hypertarget{selective-speculative-load-hardening-in-jasmin}{%
+%\subsection{\#\#\# Selective Speculative Load Hardening (in
+%Jasmin)}\label{selective-speculative-load-hardening-in-jasmin}}
+%
+%\hypertarget{slh-vs-selective-slh}{%
+%\subsubsection{SLH v/s Selective SLH}\label{slh-vs-selective-slh}}
+%
+%SLH tries to protect all the loads in a given program. This is typical
+%in an environment when the compiler doesn't know the security level of a
+%variable. However, cryptographic primitives are written in a
+%constant-time paradigm and the security levels of the variables are
+%known. Here, the secrets can only leak speculatively through loading a
+%public variable. So, we just need to protect public loads only. Hence
+%the term Selective SLH.
+%
+%With two-level security annotation and a robust typing rules, Jasmin can
+%efficiently protect a program using Selective Speculative Load Hardening
+%against Spectre v1 attacks.
+%
+%\hypertarget{misspeculation-flag-msf-states}{%
+%\subsubsection{Misspeculation flag (MSF)
+%states}\label{misspeculation-flag-msf-states}}
+%
+%Misspeculation flag can be in the following three states. 1.
+%\texttt{Unknown}: At this state at the given program point, we have no
+%idea about speculation status. 2. \texttt{Exact}: At this state at the
+%given program point, we know if we are misspeculating or not. 3.
+%\texttt{Conditioned\ on\ b}: At this state at the given program point,
+%we have entered a branch where the condtion is bool \texttt{b}. With the
+%help of \texttt{b} we can update our state to \texttt{Exact}. If the MSF
+%state is not updated correctly before exiting the branch, we will
+%transition into \texttt{Unknown} state.
+%
+%\hypertarget{jasmin-primitives-to-perform-slh}{%
+%\subsubsection{Jasmin primitives to perform
+%SLH}\label{jasmin-primitives-to-perform-slh}}
+%
+%Jasmin provides three main primitives to implement SLH and an extra
+%primitive to optimize code by moving misspeculation flag.
+%
+%\begin{enumerate}
+%\def\labelenumi{\arabic{enumi}.}
+%\item
+%  Initializing misspeculation flag:
+%
+%  \texttt{init\_msf} calls the memory barrier to stop the exisitng (if
+%  any) speculation to resolve all the loads at this program execution
+%  point and initializes the misspeculation flag. MSF will move to
+%  ``Exact'' state.
+%  \texttt{\#msf\ reg\ u64\ msf;\ \ msf\ =\ \#init\_msf();\ \ //\ Lowered\ to\ "lfence;\ msf\ =\ 0"\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ //\ at\ this\ point\ msf\ is\ in\ Exact\ state}
+%\item
+%  Updating the misspeculation flag:
+%
+%  \texttt{update\_msf} is used to update the misspeculation flag using
+%  the branch condition and branchless CMOVxx instruction. This will move
+%  the msf from ``Conditioned on b'' to ``Exact'' state.
+%
+%\begin{verbatim}
+%reg bool b;
+%#msf reg u64 msf;
+%b = i < 10;
+%
+%msf = #init_msf();                  // msf in "Exact" state
+%if (b) {
+%                                    // msf in "Conditioned on b" state
+%    msf = #update_msf(b, msf);      // "msf = b ? msf : -1;"
+%                                    // msf in "Exact" state
+%} else {
+%                                    // msf in "Conditioned on !b" state
+%    msf = #update_msf(!b, msf);     // "msf = !b ? msf : -1;"
+%                                    // msf in "Exact" state
+%}
+%// msf will be in "Exact" state if and only if
+%// in both branches, corresponding msf's state were "Exact"
+%// else, it will move to "Unknown" state
+%\end{verbatim}
+%\item
+%  Protecting a variable:
+%
+%  \texttt{protect} primitive is used to mask the value using boolean OR
+%  if it is misspeculating. If not misspeculating, the msf will be 0.
+%  else, it will be -1. There are other variants like
+%  \texttt{protect\_8}, \texttt{protect\_16}, \texttt{protect\_32} etc..
+%  to protect different sizes of register variable.
+%  \texttt{x\ =\ \#protect(x,\ msf);\ \ \ \ \ \ \ //\ Lowered\ to\ "x\ =\ x\ \textbar{}\ msf;"}
+%\item
+%  Moving misspeculation flag:
+%
+%  \texttt{mov\_msf} is used to move a msf from one register variable to
+%  another register variable. It is often used when there is a register
+%  pressure and we move it to MMX register variable. {[}TODO: check this
+%  properly{]}
+%  \texttt{\#msf\ regx\ u64\ msfx;\ \ ....\ \ msfx\ =\ \#mov\_msf(msf);}
+%  \#\#\# Annotations supported to perform selective SLH
+%\end{enumerate}
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  \texttt{\#public} tells the Compiler that this is a public variable.
+%\item
+%  \texttt{\#transient} tells the Compiler that this is a transient
+%  variable. i.e it is a public variable in normal execution and might
+%  contain secret speculatively.
+%\item
+%  \texttt{\#secret} tells the Compiler that this is a secret variable.
+%\item
+%  \texttt{\#declassify} tells the compiler that this variable needs to
+%  be declassified from secret. Compiler changes the type of this
+%  variable to transient. It can only be made public after
+%  \texttt{protect}ing it.
+%\item
+%  \texttt{\#msf} tells the Compiler that this is a MSF variable.
+%\item
+%  \texttt{\#inline} tells the Compiler that this expression/block will
+%  be inlined. Often used in a case when the if's branch condition will
+%  be resolved statically at compile time and will not be subject to
+%  branch speculation.
+%\item
+%  \texttt{\#nomodmsf} tells the compiler that this corresponding
+%  function will not modify the MSF state.
+%\end{itemize}
+%
+%\hypertarget{things-to-consider}{%
+%\subsubsection{Things to consider}\label{things-to-consider}}
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  MSF variable must be in a register.
+%\item
+%  The arguments in the \texttt{export} function will be atleast
+%  \texttt{transient} because the \texttt{jasminc} compiler does not take
+%  MSF variable as an argument in \texttt{export} function and
+%  defensively assumes that we might already be misspeculating before
+%  executing jasmin \texttt{export} function.
+%\item
+%  In \texttt{jasmin} language, \texttt{if}, \texttt{while},
+%  \texttt{init\_msf}, \texttt{update\_msf} and calling a system call
+%  like \texttt{randombytes} will modify the MSF state. Hence, cannot be
+%  used in a \texttt{nomodmsf} function.
+%\item
+%  \texttt{inline} expression must be resolved at compile time.
+%\item
+%  By default, reading data through memory access operation will return a
+%  \texttt{secret} type value. {[}TODO: check this.{]}
+%\item
+%  In Jasmin, \texttt{for} loop is unrolled and is not subject to branch
+%  speculation. However, \texttt{if} and \texttt{while} are subject to
+%  branch speculation.
+%\end{itemize}
+%
+%\hypertarget{examples}{%
+%\subsubsection{Examples}\label{examples}}
+%
+%Let us consider a small example function \texttt{encrypt} which takes a
+%msg and a secret key. It encrypts it using basic XOR operations and then
+%the final output can be declassifed and make it public.
+%
+%Unprotected \texttt{encrypt} jasmin function example:
+%
+%\begin{verbatim}
+%fn encrypt(reg u64[4] key, reg u64[4] msg) -> reg u64[4] {
+%    reg u64 i, temp;
+%    reg u64[4] res;
+%    reg bool b;
+%
+%    while {b = i < 4;} (b) {
+%        temp = msg[(int)i];
+%        temp = temp ^ key[(int)i];
+%        res[(int)i] = temp;
+%        i = i + 1;
+%    }
+%
+%    return res;
+%}
+%\end{verbatim}
+%
+%Protected \texttt{encrypt} jasmin function example:
+%
+%\begin{verbatim}
+%fn encrypt(#secret reg u64[4] key, reg u64[4] msg) -> #public reg u64[4] {
+%    reg u64 i, temp, msf;
+%    reg u64[4] res;
+%    reg bool b;
+%
+%    msf = #init_msf();
+%    while {b = i < 4;} (b) {
+%        msf = #update_msf(b, msf);
+%        temp = msg[(int)i];
+%        #declassify temp = temp ^ key[(int)i];
+%        temp = #protect(temp, msf);             // made public before assigning to res
+%        res[(int)i] = temp;
+%        i = i + 1;
+%    }
+%    msf = #update_msf(!b, msf);
+%
+%    return res;
+%}
+%\end{verbatim}
+%
+%\hypertarget{compiler-option}{%
+%\paragraph{Compiler option}\label{compiler-option}}
+%
+%You can use \texttt{checkSCT} to check a jasmin file or
+%\texttt{checkSCTon} to check a particular function in a jasmin file.
+%
+%\begin{verbatim}
+%jasminc -checkSCT <filename.jazz>
+%jasminc -checkSCTon encrypt <filename.jazz>
+%\end{verbatim}
+%
+%\hypertarget{additional-examples-and-test-cases}{%
+%\subsubsection{Additional examples and test
+%cases}\label{additional-examples-and-test-cases}}
+%
+%For more examples please have a look at success
+%\texttt{compiler/tests/success/slh/x86-64} and failure
+%\texttt{compiler/tests/fail/slh/x86-64} test cases in the source code.
+%\href{https://github.com/formosa-crypto/libjade}{Libjade} a formally
+%verified cryptographic library uses this framework to protect its
+%implementations from Spectre v1 attack.
+%
+%A Jasmin program is a collection of:
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  parameters;
+%\item
+%  global variables;
+%\item
+%  functions.
+%\end{itemize}
+%
+%\hypertarget{require}{%
+%\subsection{Require}\label{require}}
+%
+%Since version 2022.04.0, a program may be split into several files using
+%a \texttt{require} clause. Its simplest form is as follows
+%
+%\begin{verbatim}
+%require "path/file.jinc"
+%\end{verbatim}
+%
+%Relative paths are resolved relative to the current file.
+%
+%The required file is treated (mostly) as if its contents were put in
+%place of the \texttt{require} clause.
+%
+%Files can also be searched in named locations, for instance:
+%
+%\begin{verbatim}
+%from AES require "aes.jinc"
+%\end{verbatim}
+%
+%This clause requires the file \texttt{aes.jinc} that is located in a
+%path named \texttt{AES}. There are two ways to give names to paths in
+%the file-system:
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  either on the command-line using the argument
+%  \texttt{-I\ AES:actual/path/};
+%\item
+%  or using the \texttt{JASMINPATH} environment variable, as in
+%  \texttt{export\ JASMINPATH=AES=actual/path/}.
+%\end{itemize}
+%
+%If several paths must be named, the \texttt{-I} argument can be used
+%multiple times, and in the environment variable value, several
+%\texttt{ID=path} pairs can be separated by a colon (\texttt{:}).
+%
+%\hypertarget{parameters}{%
+%\subsection{Parameters}\label{parameters}}
+%
+%A parameter is a named value. The name can be used within types (e.g.,
+%as the size of an array): as such, they can be used to provide a limited
+%form of genericity.
+%
+%Parameters are removed by the compiler right after parsing; in
+%particular, they do not appear in the Coq abstract syntax. Therefore,
+%they have no formal semantics.
+%
+%A parameter is introduced by the \texttt{param} keyword, followed by a
+%type, a name, and the value. For instance:
+%
+%\begin{verbatim}
+%param int cROUNDS = 2;
+%\end{verbatim}
+%
+%\hypertarget{types-aliases}{%
+%\subsection{Types Aliases}\label{types-aliases}}
+%
+%Jasmin compiler latest development version (still unreleased) introduced
+%a new syntax feature for type definition. A type alias can be defined at
+%top level of a program or a namespace. The aim of this feature is to
+%improve genericity of Jasmin code. The types aliases are resolved like
+%params, during parsing.
+%
+%To define a type alias, we introduced the \texttt{type} keyword, which
+%is followed by a name, and the a type. For example :
+%
+%\begin{verbatim}
+%type reg_size = u64;
+%\end{verbatim}
+%
+%Defined types can then be used in programs in place of the compiler
+%types.
+%
+%\begin{verbatim}
+%reg reg_size a; //declaring variable a with type reg_size
+%reg reg_size[10] b; //declaring an array with elements of type reg_size
+%\end{verbatim}
+%
+%We can note that the feature doesn't allow definitions like :
+%
+%\begin{verbatim}
+%type x = reg u64;
+%\end{verbatim}
+%
+%We can consider that the storage type (\texttt{reg}, \texttt{stack},
+%\texttt{inline} \ldots) is similar to the declaration keyword
+%\texttt{let} in other languages (for instance Rust). Storage type is
+%thus not a type, and should not be aliased.
+%
+%\hypertarget{global-variables}{%
+%\subsection{Global variables}\label{global-variables}}
+%
+%A global variable is a named valued. Unlike parameters, said value is
+%not available at compile-time (i.e., it cannot be used as part of a
+%type), but it is available at run-time.
+%
+%Technically, global variables are stored in the code segment and are
+%accessed to using PC-relative addressing mode.
+%
+%There is no keyword to introduce a global variable declaration at the
+%top-level, only its type, name, and value. For instance:
+%
+%\begin{verbatim}
+%u128 rotate24pattern = (16u8)[ 12, 15, 14, 13, 8, 11, 10, 9, 4, 7, 6, 5, 0, 3, 2, 1 ];
+%\end{verbatim}
+%
+%In this example, the value is a 128-bit machine-word, described as a
+%vector of 16 8-bit machine-words.
+%
+%\hypertarget{functions}{%
+%\subsection{Functions}\label{functions}}
+%
+%A function is introduced using the \texttt{fn} keyword, followed by the
+%function name, the list of its parameters, its return type (if any), and
+%its body. The body begins with the declaration of local variables and
+%ends with a \texttt{return} statement.
+%
+%Here is an example function:
+%
+%\begin{verbatim}
+%inline
+%fn shift(reg u128 x, inline int count) -> reg u128 {
+%  reg u128 r;
+%  r = #VPSLL_4u32(x, count);
+%  return r;
+%}
+%\end{verbatim}
+%
+%A function definition may be prefixed with either the \texttt{inline}
+%keyword or the \texttt{export} keyword to denote, respectively, that the
+%function will be removed by the compiler or that it will be present in
+%the final assembly code and respect the target calling conventions.
+%
+%Functions that are not marked with \texttt{inline} or \texttt{export}
+%are local functions: they will be preserved by the compiler but are not
+%visible from the outside (i.e, they cannot be called from non-Jasmin
+%code). This feature has been introduced in version 2022.04.0.
+%
+%\hypertarget{syntax-reference}{%
+%\section{Syntax Reference}\label{syntax-reference}}
+%
+%This briefly describes the concrete syntax of Jasmin programs
+%
+%\protect\hypertarget{var}{}{var:}
+%
+%\texttt{}
+%
+%\protect\hyperlink{var}{var}~~~~~~::= \protect\hyperlink{NID}{NID}
+%
+%referenced by:
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  \protect\hyperlink{annot_pvardecl}{annot\_pvardecl}
+%\item
+%  \protect\hyperlink{pexpr_r}{pexpr\_r}
+%\item
+%  \protect\hyperlink{pfunbody}{pfunbody}
+%\item
+%  \protect\hyperlink{pinstr_r}{pinstr\_r}
+%\item
+%  \protect\hyperlink{plvalue_r}{plvalue\_r}
+%\end{itemize}
+%
+%\protect\hypertarget{keyword}{}{keyword:}
+%
+%\texttt{}
+%
+%\protect\hyperlink{keyword}{keyword}~~::= `inline'
+%
+%~~~~~~~~~~~\textbar{} `export'
+%
+%~~~~~~~~~~~\textbar{} `reg'
+%
+%~~~~~~~~~~~\textbar{} `stack'
+%
+%referenced by:
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  \protect\hyperlink{annotationlabel}{annotationlabel}
+%\item
+%  \protect\hyperlink{simple_attribute}{simple\_attribute}
+%\end{itemize}
+%
+%\protect\hypertarget{annotationlabel}{}{annotationlabel:}
+%
+%\texttt{}
+%
+%\protect\hyperlink{annotationlabel}{annotationlabel}
+%
+%~~~~~~~~~::= \protect\hyperlink{NID}{NID}
+%
+%~~~~~~~~~~~\textbar{} \protect\hyperlink{keyword}{keyword}
+%
+%~~~~~~~~~~~\textbar{} `string'
+%
+%referenced by:
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  \protect\hyperlink{annotation}{annotation}
+%\end{itemize}
+%
+%\protect\hypertarget{int}{}{int:}
+%
+%\texttt{}
+%
+%\protect\hyperlink{int}{int}~~~~~~::= `-'? \protect\hyperlink{INT}{INT}
+%
+%referenced by:
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  \protect\hyperlink{simple_attribute}{simple\_attribute}
+%\end{itemize}
+%
+%\protect\hypertarget{simple_attribute}{}{simple\_attribute:}
+%
+%\texttt{}
+%
+%\protect\hyperlink{simple_attribute}{simple\_attribute}
+%
+%~~~~~~~~~::= \protect\hyperlink{int}{int}
+%
+%~~~~~~~~~~~\textbar{} \protect\hyperlink{NID}{NID}
+%
+%~~~~~~~~~~~\textbar{} `string'
+%
+%~~~~~~~~~~~\textbar{} \protect\hyperlink{keyword}{keyword}
+%
+%~~~~~~~~~~~\textbar{} \protect\hyperlink{utype}{utype}
+%
+%referenced by:
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  \protect\hyperlink{attribute}{attribute}
+%\end{itemize}
+%
+%\protect\hypertarget{attribute}{}{attribute:}
+%
+%\texttt{}
+%
+%\protect\hyperlink{attribute}{attribute}
+%
+%~~~~~~~~~::= `=' (
+%\protect\hyperlink{simple_attribute}{simple\_attribute} \textbar{} `\{'
+%\protect\hyperlink{struct_annot}{struct\_annot} `\}' )
+%
+%referenced by:
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  \protect\hyperlink{annotation}{annotation}
+%\end{itemize}
+%
+%\protect\hypertarget{annotation}{}{annotation:}
+%
+%\texttt{}
+%
+%\protect\hyperlink{annotation}{annotation}
+%
+%~~~~~~~~~::= \protect\hyperlink{annotationlabel}{annotationlabel}
+%\protect\hyperlink{attribute}{attribute}?
+%
+%referenced by:
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  \protect\hyperlink{struct_annot}{struct\_annot}
+%\item
+%  \protect\hyperlink{top_annotation}{top\_annotation}
+%\end{itemize}
+%
+%\protect\hypertarget{struct_annot}{}{struct\_annot:}
+%
+%\texttt{}
+%
+%\protect\hyperlink{struct_annot}{struct\_annot}
+%
+%~~~~~~~~~::= ( \protect\hyperlink{annotation}{annotation} ( `,'
+%\protect\hyperlink{annotation}{annotation} )* )?
+%
+%referenced by:
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  \protect\hyperlink{attribute}{attribute}
+%\item
+%  \protect\hyperlink{implicites}{implicites}
+%\item
+%  \protect\hyperlink{top_annotation}{top\_annotation}
+%\end{itemize}
+%
+%\protect\hypertarget{top_annotation}{}{top\_annotation:}
+%
+%\texttt{}
+%
+%\protect\hyperlink{top_annotation}{top\_annotation}
+%
+%~~~~~~~~~::= `\#' ( \protect\hyperlink{annotation}{annotation}
+%\textbar{} `{[}' \protect\hyperlink{struct_annot}{struct\_annot} `{]}' )
+%
+%referenced by:
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  \protect\hyperlink{annotations}{annotations}
+%\end{itemize}
+%
+%\protect\hypertarget{annotations}{}{annotations:}
+%
+%\texttt{}
+%
+%\protect\hyperlink{annotations}{annotations}
+%
+%~~~~~~~~~::= \protect\hyperlink{top_annotation}{top\_annotation}*
+%
+%referenced by:
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  \protect\hyperlink{annot_pvardecl}{annot\_pvardecl}
+%\item
+%  \protect\hyperlink{annot_stor_type}{annot\_stor\_type}
+%\item
+%  \protect\hyperlink{pfundef}{pfundef}
+%\item
+%  \protect\hyperlink{pinstr}{pinstr}
+%\end{itemize}
+%
+%\protect\hypertarget{utype}{}{utype:}
+%
+%\texttt{}
+%
+%\protect\hyperlink{utype}{utype}~~~~::= `u8'
+%
+%~~~~~~~~~~~\textbar{} `u16'
+%
+%~~~~~~~~~~~\textbar{} `u32'
+%
+%~~~~~~~~~~~\textbar{} `u64'
+%
+%~~~~~~~~~~~\textbar{} `u128'
+%
+%~~~~~~~~~~~\textbar{} `u256'
+%
+%referenced by:
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  \protect\hyperlink{arr_access_i}{arr\_access\_i}
+%\item
+%  \protect\hyperlink{pexpr_r}{pexpr\_r}
+%\item
+%  \protect\hyperlink{plvalue_r}{plvalue\_r}
+%\item
+%  \protect\hyperlink{ptype_r}{ptype\_r}
+%\item
+%  \protect\hyperlink{simple_attribute}{simple\_attribute}
+%\end{itemize}
+%
+%\protect\hypertarget{ptype_r}{}{ptype\_r:}
+%
+%\texttt{}
+%
+%\protect\hyperlink{ptype_r}{ptype\_r}~~::= `bool'
+%
+%~~~~~~~~~~~\textbar{} `int'
+%
+%~~~~~~~~~~~\textbar{} \protect\hyperlink{utype}{utype} ( `{[}'
+%\protect\hyperlink{pexpr}{pexpr} `{]}' )?
+%
+%referenced by:
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  \protect\hyperlink{ptype}{ptype}
+%\end{itemize}
+%
+%\protect\hypertarget{ptype}{}{ptype:}
+%
+%\texttt{}
+%
+%\protect\hyperlink{ptype}{ptype}~~~~::=
+%\protect\hyperlink{ptype_r}{ptype\_r}
+%
+%referenced by:
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  \protect\hyperlink{pglobal}{pglobal}
+%\item
+%  \protect\hyperlink{pparam}{pparam}
+%\item
+%  \protect\hyperlink{stor_type}{stor\_type}
+%\end{itemize}
+%
+%\protect\hypertarget{swsize}{}{swsize:}
+%
+%\texttt{}
+%
+%\protect\hyperlink{swsize}{swsize}~~~::=
+%\protect\hyperlink{SWSIZE}{SWSIZE}
+%
+%referenced by:
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  \protect\hyperlink{cast}{cast}
+%\item
+%  \protect\hyperlink{castop1}{castop1}
+%\end{itemize}
+%
+%\protect\hypertarget{svsize}{}{svsize:}
+%
+%\texttt{}
+%
+%\protect\hyperlink{svsize}{svsize}~~~::=
+%\protect\hyperlink{SVSIZE}{SVSIZE}
+%
+%referenced by:
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  \protect\hyperlink{castop1}{castop1}
+%\item
+%  \protect\hyperlink{pexpr_r}{pexpr\_r}
+%\end{itemize}
+%
+%\protect\hypertarget{castop1}{}{castop1:}
+%
+%\texttt{}
+%
+%\protect\hyperlink{castop1}{castop1}~~::=
+%\protect\hyperlink{swsize}{swsize}
+%
+%~~~~~~~~~~~\textbar{} \protect\hyperlink{svsize}{svsize}
+%
+%referenced by:
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  \protect\hyperlink{castop}{castop}
+%\end{itemize}
+%
+%\protect\hypertarget{castop}{}{castop:}
+%
+%\texttt{}
+%
+%\protect\hyperlink{castop}{castop}~~~::=
+%\protect\hyperlink{castop1}{castop1}?
+%
+%referenced by:
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  \protect\hyperlink{peqop}{peqop}
+%\item
+%  \protect\hyperlink{pexpr_r}{pexpr\_r}
+%\end{itemize}
+%
+%\protect\hypertarget{cast}{}{cast:}
+%
+%\texttt{}
+%
+%\protect\hyperlink{cast}{cast}~~~~~::= `int'
+%
+%~~~~~~~~~~~\textbar{} \protect\hyperlink{swsize}{swsize}
+%
+%referenced by:
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  \protect\hyperlink{pexpr_r}{pexpr\_r}
+%\end{itemize}
+%
+%\protect\hypertarget{prim}{}{prim:}
+%
+%\texttt{}
+%
+%\protect\hyperlink{prim}{prim}~~~~~::= `\#' \protect\hyperlink{NID}{NID}
+%
+%referenced by:
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  \protect\hyperlink{pexpr_r}{pexpr\_r}
+%\end{itemize}
+%
+%\protect\hypertarget{arr_access_len}{}{arr\_access\_len:}
+%
+%\texttt{}
+%
+%\protect\hyperlink{arr_access_len}{arr\_access\_len}
+%
+%~~~~~~~~~::= `:' \protect\hyperlink{pexpr}{pexpr}
+%
+%referenced by:
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  \protect\hyperlink{arr_access_i}{arr\_access\_i}
+%\end{itemize}
+%
+%\protect\hypertarget{arr_access_i}{}{arr\_access\_i:}
+%
+%\texttt{}
+%
+%\protect\hyperlink{arr_access_i}{arr\_access\_i}
+%
+%~~~~~~~~~::= \protect\hyperlink{utype}{utype}?
+%\protect\hyperlink{pexpr}{pexpr}
+%\protect\hyperlink{arr_access_len}{arr\_access\_len}?
+%
+%referenced by:
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  \protect\hyperlink{arr_access}{arr\_access}
+%\end{itemize}
+%
+%\protect\hypertarget{arr_access}{}{arr\_access:}
+%
+%\texttt{}
+%
+%\protect\hyperlink{arr_access}{arr\_access}
+%
+%~~~~~~~~~::= `.'? `{[}' \protect\hyperlink{arr_access_i}{arr\_access\_i}
+%`{]}'
+%
+%referenced by:
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  \protect\hyperlink{pexpr_r}{pexpr\_r}
+%\item
+%  \protect\hyperlink{plvalue_r}{plvalue\_r}
+%\end{itemize}
+%
+%\protect\hypertarget{pexpr_r}{}{pexpr\_r:}
+%
+%\texttt{}
+%
+%\protect\hyperlink{pexpr_r}{pexpr\_r}~~::= \protect\hyperlink{var}{var}
+%( \protect\hyperlink{arr_access}{arr\_access} \textbar{} `(' (
+%\protect\hyperlink{pexpr}{pexpr} ( `,' \protect\hyperlink{pexpr}{pexpr}
+%)* )? `)' )?
+%
+%~~~~~~~~~~~\textbar{} `true'
+%
+%~~~~~~~~~~~\textbar{} `false'
+%
+%~~~~~~~~~~~\textbar{} \protect\hyperlink{INT}{INT}
+%
+%~~~~~~~~~~~\textbar{} ( `(' \protect\hyperlink{utype}{utype} `)' )?
+%`{[}' \protect\hyperlink{var}{var} ( ( `+' \textbar{} `-' )
+%\protect\hyperlink{pexpr}{pexpr} )? `{]}'
+%
+%~~~~~~~~~~~\textbar{} `(' ( \protect\hyperlink{svsize}{svsize} `)' `{[}'
+%\protect\hyperlink{pexpr}{pexpr} ( `,' \protect\hyperlink{pexpr}{pexpr}
+%)* `{]}' \textbar{} \protect\hyperlink{cast}{cast} `)'
+%\protect\hyperlink{pexpr}{pexpr} \textbar{}
+%\protect\hyperlink{pexpr}{pexpr} `)' )
+%
+%~~~~~~~~~~~\textbar{} ( ( `!' \textbar{} `-' )
+%\protect\hyperlink{castop}{castop} \textbar{}
+%\protect\hyperlink{pexpr}{pexpr} ( `\&\&' \textbar{} `!!' \textbar{} (
+%`+' \textbar{} `-' \textbar{} `*' \textbar{} `/' \textbar{} `\%'
+%\textbar{} `\&' \textbar{} `\textbar{}' \textbar{} `\^{}' \textbar{}
+%`\textless\textless{}' \textbar{} `\textgreater\textgreater{[}su{]}?'
+%\textbar{} `==' \textbar{} `!=' \textbar{} `\textless{[}su{]}?'
+%\textbar{} `\textless={[}su{]}?' \textbar{} `\textgreater{[}su{]}?'
+%\textbar{} `\textgreater={[}su{]}?' ) \protect\hyperlink{castop}{castop}
+%\textbar{} `?' \protect\hyperlink{pexpr}{pexpr} `:' ) )
+%\protect\hyperlink{pexpr}{pexpr}
+%
+%~~~~~~~~~~~\textbar{} \protect\hyperlink{prim}{prim} `(' (
+%\protect\hyperlink{pexpr}{pexpr} ( `,' \protect\hyperlink{pexpr}{pexpr}
+%)* )? `)'
+%
+%referenced by:
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  \protect\hyperlink{pexpr}{pexpr}
+%\end{itemize}
+%
+%\protect\hypertarget{pexpr}{}{pexpr:}
+%
+%\texttt{}
+%
+%\protect\hyperlink{pexpr}{pexpr}~~~~::=
+%\protect\hyperlink{pexpr_r}{pexpr\_r}
+%
+%referenced by:
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  \protect\hyperlink{arr_access_i}{arr\_access\_i}
+%\item
+%  \protect\hyperlink{arr_access_len}{arr\_access\_len}
+%\item
+%  \protect\hyperlink{pexpr_r}{pexpr\_r}
+%\item
+%  \protect\hyperlink{pgexpr}{pgexpr}
+%\item
+%  \protect\hyperlink{pinstr_r}{pinstr\_r}
+%\item
+%  \protect\hyperlink{plvalue_r}{plvalue\_r}
+%\item
+%  \protect\hyperlink{pparam}{pparam}
+%\item
+%  \protect\hyperlink{ptype_r}{ptype\_r}
+%\end{itemize}
+%
+%\protect\hypertarget{peqop}{}{peqop:}
+%
+%\texttt{}
+%
+%\protect\hyperlink{peqop}{peqop}~~~~::= ( ( `+' \textbar{} `-'
+%\textbar{} `*' \textbar{} `\textgreater\textgreater{[}su{]}?' \textbar{}
+%`\textless\textless{}' \textbar{} `\&' \textbar{} `\^{}' \textbar{}
+%`\textbar{}' ) \protect\hyperlink{castop}{castop} )? `='
+%
+%referenced by:
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  \protect\hyperlink{pinstr_r}{pinstr\_r}
+%\end{itemize}
+%
+%\protect\hypertarget{plvalue_r}{}{plvalue\_r:}
+%
+%\texttt{}
+%
+%\protect\hyperlink{plvalue_r}{plvalue\_r}
+%
+%~~~~~~~~~::= `\_'
+%
+%~~~~~~~~~~~\textbar{} \protect\hyperlink{var}{var}
+%\protect\hyperlink{arr_access}{arr\_access}?
+%
+%~~~~~~~~~~~\textbar{} ( `(' \protect\hyperlink{utype}{utype} `)' )?
+%`{[}' \protect\hyperlink{var}{var} ( ( `+' \textbar{} `-' )
+%\protect\hyperlink{pexpr}{pexpr} )? `{]}'
+%
+%referenced by:
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  \protect\hyperlink{plvalue}{plvalue}
+%\end{itemize}
+%
+%\protect\hypertarget{plvalue}{}{plvalue:}
+%
+%\texttt{}
+%
+%\protect\hyperlink{plvalue}{plvalue}~~::=
+%\protect\hyperlink{plvalue_r}{plvalue\_r}
+%
+%referenced by:
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  \protect\hyperlink{plvalues}{plvalues}
+%\end{itemize}
+%
+%\protect\hypertarget{implicites}{}{implicites:}
+%
+%\texttt{}
+%
+%\protect\hyperlink{implicites}{implicites}
+%
+%~~~~~~~~~::= `?' `\{' \protect\hyperlink{struct_annot}{struct\_annot}
+%`\}'
+%
+%referenced by:
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  \protect\hyperlink{plvalues}{plvalues}
+%\end{itemize}
+%
+%\protect\hypertarget{plvalues}{}{plvalues:}
+%
+%\texttt{}
+%
+%\protect\hyperlink{plvalues}{plvalues}~::= `('
+%\protect\hyperlink{plvalue}{plvalue} ( `,'
+%\protect\hyperlink{plvalue}{plvalue} )* `)'
+%
+%~~~~~~~~~~~\textbar{} ( \protect\hyperlink{plvalue}{plvalue} \textbar{}
+%\protect\hyperlink{implicites}{implicites} ) ( `,'
+%\protect\hyperlink{plvalue}{plvalue} )*
+%
+%referenced by:
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  \protect\hyperlink{pinstr_r}{pinstr\_r}
+%\end{itemize}
+%
+%\protect\hypertarget{pinstr_r}{}{pinstr\_r:}
+%
+%\texttt{}
+%
+%\protect\hyperlink{pinstr_r}{pinstr\_r}~::= ( `ArrayInit' `('
+%\protect\hyperlink{var}{var} `)' \textbar{} (
+%\protect\hyperlink{plvalues}{plvalues} \protect\hyperlink{peqop}{peqop}
+%\protect\hyperlink{pexpr}{pexpr} \textbar{} \protect\hyperlink{var}{var}
+%`(' ( \protect\hyperlink{pexpr}{pexpr} ( `,'
+%\protect\hyperlink{pexpr}{pexpr} )* )? `)' ) ( `if'
+%\protect\hyperlink{pexpr}{pexpr} )? \textbar{}
+%\protect\hyperlink{stor_type}{stor\_type} \protect\hyperlink{var}{var} (
+%`,'? \protect\hyperlink{var}{var} )* ) `;'
+%
+%~~~~~~~~~~~\textbar{} ( `if' \protect\hyperlink{pexpr}{pexpr} (
+%\protect\hyperlink{pblock}{pblock} `else' )? \textbar{} `for'
+%\protect\hyperlink{var}{var} `=' \protect\hyperlink{pexpr}{pexpr} ( `to'
+%\textbar{} `downto' ) \protect\hyperlink{pexpr}{pexpr} )
+%\protect\hyperlink{pblock}{pblock}
+%
+%~~~~~~~~~~~\textbar{} `while' \protect\hyperlink{pblock}{pblock}? `('
+%\protect\hyperlink{pexpr}{pexpr} `)' \protect\hyperlink{pblock}{pblock}?
+%
+%referenced by:
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  \protect\hyperlink{pinstr}{pinstr}
+%\end{itemize}
+%
+%\protect\hypertarget{pinstr}{}{pinstr:}
+%
+%\texttt{}
+%
+%\protect\hyperlink{pinstr}{pinstr}~~~::=
+%\protect\hyperlink{annotations}{annotations}
+%\protect\hyperlink{pinstr_r}{pinstr\_r}
+%
+%referenced by:
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  \protect\hyperlink{pblock_r}{pblock\_r}
+%\item
+%  \protect\hyperlink{pfunbody}{pfunbody}
+%\end{itemize}
+%
+%\protect\hypertarget{pblock_r}{}{pblock\_r:}
+%
+%\texttt{}
+%
+%\protect\hyperlink{pblock_r}{pblock\_r}~::= `\{'
+%\protect\hyperlink{pinstr}{pinstr}* `\}'
+%
+%referenced by:
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  \protect\hyperlink{pblock}{pblock}
+%\end{itemize}
+%
+%\protect\hypertarget{pblock}{}{pblock:}
+%
+%\texttt{}
+%
+%\protect\hyperlink{pblock}{pblock}~~~::=
+%\protect\hyperlink{pblock_r}{pblock\_r}
+%
+%referenced by:
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  \protect\hyperlink{pinstr_r}{pinstr\_r}
+%\end{itemize}
+%
+%\protect\hypertarget{stor_type}{}{stor\_type:}
+%
+%\texttt{}
+%
+%\protect\hyperlink{stor_type}{stor\_type}
+%
+%~~~~~~~~~::= \protect\hyperlink{storage}{storage}
+%\protect\hyperlink{ptype}{ptype}
+%
+%referenced by:
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  \protect\hyperlink{annot_pvardecl}{annot\_pvardecl}
+%\item
+%  \protect\hyperlink{annot_stor_type}{annot\_stor\_type}
+%\item
+%  \protect\hyperlink{pinstr_r}{pinstr\_r}
+%\end{itemize}
+%
+%\protect\hypertarget{annot_stor_type}{}{annot\_stor\_type:}
+%
+%\texttt{}
+%
+%\protect\hyperlink{annot_stor_type}{annot\_stor\_type}
+%
+%~~~~~~~~~::= \protect\hyperlink{annotations}{annotations}
+%\protect\hyperlink{stor_type}{stor\_type}
+%
+%referenced by:
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  \protect\hyperlink{pfundef}{pfundef}
+%\end{itemize}
+%
+%\protect\hypertarget{writable}{}{writable:}
+%
+%\texttt{}
+%
+%\protect\hyperlink{writable}{writable}~::= `const'
+%
+%~~~~~~~~~~~\textbar{} `mut'
+%
+%referenced by:
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  \protect\hyperlink{pointer}{pointer}
+%\end{itemize}
+%
+%\protect\hypertarget{pointer}{}{pointer:}
+%
+%\texttt{}
+%
+%\protect\hyperlink{pointer}{pointer}~~::=
+%\protect\hyperlink{writable}{writable}? `ptr'
+%
+%referenced by:
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  \protect\hyperlink{ptr}{ptr}
+%\end{itemize}
+%
+%\protect\hypertarget{ptr}{}{ptr:}
+%
+%\texttt{}
+%
+%\protect\hyperlink{ptr}{ptr}~~~~~~::=
+%\protect\hyperlink{pointer}{pointer}?
+%
+%referenced by:
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  \protect\hyperlink{storage}{storage}
+%\end{itemize}
+%
+%\protect\hypertarget{storage}{}{storage:}
+%
+%\texttt{}
+%
+%\protect\hyperlink{storage}{storage}~~::= ( `reg' \textbar{} `stack' )
+%\protect\hyperlink{ptr}{ptr}
+%
+%~~~~~~~~~~~\textbar{} `inline'
+%
+%~~~~~~~~~~~\textbar{} `global'
+%
+%referenced by:
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  \protect\hyperlink{stor_type}{stor\_type}
+%\end{itemize}
+%
+%\protect\hypertarget{annot_pvardecl}{}{annot\_pvardecl:}
+%
+%\texttt{}
+%
+%\protect\hyperlink{annot_pvardecl}{annot\_pvardecl}
+%
+%~~~~~~~~~::= \protect\hyperlink{annotations}{annotations}
+%\protect\hyperlink{stor_type}{stor\_type} \protect\hyperlink{var}{var}+
+%
+%referenced by:
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  \protect\hyperlink{pfundef}{pfundef}
+%\end{itemize}
+%
+%\protect\hypertarget{pfunbody}{}{pfunbody:}
+%
+%\texttt{}
+%
+%\protect\hyperlink{pfunbody}{pfunbody}~::= `\{'
+%\protect\hyperlink{pinstr}{pinstr}* ( `return' ( `(' (
+%\protect\hyperlink{var}{var} ( `,' \protect\hyperlink{var}{var} )* )?
+%`)' \textbar{} \protect\hyperlink{var}{var} ( `,'
+%\protect\hyperlink{var}{var} )* )? `;' )? `\}'
+%
+%referenced by:
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  \protect\hyperlink{pfundef}{pfundef}
+%\end{itemize}
+%
+%\protect\hypertarget{call_conv}{}{call\_conv:}
+%
+%\texttt{}
+%
+%\protect\hyperlink{call_conv}{call\_conv}
+%
+%~~~~~~~~~::= `export'
+%
+%~~~~~~~~~~~\textbar{} `inline'
+%
+%referenced by:
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  \protect\hyperlink{pfundef}{pfundef}
+%\end{itemize}
+%
+%\protect\hypertarget{pfundef}{}{pfundef:}
+%
+%\texttt{}
+%
+%\protect\hyperlink{pfundef}{pfundef}~~::=
+%\protect\hyperlink{annotations}{annotations}
+%\protect\hyperlink{call_conv}{call\_conv}? `fn'
+%\protect\hyperlink{NID}{NID} `(' (
+%\protect\hyperlink{annot_pvardecl}{annot\_pvardecl} ( `,'
+%\protect\hyperlink{annot_pvardecl}{annot\_pvardecl} )* )? `)' (
+%`-\textgreater{}' ( `(' (
+%\protect\hyperlink{annot_stor_type}{annot\_stor\_type} ( `,'
+%\protect\hyperlink{annot_stor_type}{annot\_stor\_type} )* )? `)'
+%\textbar{} \protect\hyperlink{annot_stor_type}{annot\_stor\_type} ( `,'
+%\protect\hyperlink{annot_stor_type}{annot\_stor\_type} )* )? )?
+%\protect\hyperlink{pfunbody}{pfunbody}
+%
+%referenced by:
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  \protect\hyperlink{top}{top}
+%\end{itemize}
+%
+%\protect\hypertarget{pparam}{}{pparam:}
+%
+%\texttt{}
+%
+%\protect\hyperlink{pparam}{pparam}~~~::= `param'
+%\protect\hyperlink{ptype}{ptype} \protect\hyperlink{NID}{NID} `='
+%\protect\hyperlink{pexpr}{pexpr} `;'
+%
+%referenced by:
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  \protect\hyperlink{top}{top}
+%\end{itemize}
+%
+%\protect\hypertarget{pgexpr}{}{pgexpr:}
+%
+%\texttt{}
+%
+%\protect\hyperlink{pgexpr}{pgexpr}~~~::=
+%\protect\hyperlink{pexpr}{pexpr}
+%
+%~~~~~~~~~~~\textbar{} `\{' \protect\hyperlink{pexpr}{pexpr} ( `,'
+%\protect\hyperlink{pexpr}{pexpr} )* `\}'
+%
+%referenced by:
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  \protect\hyperlink{pglobal}{pglobal}
+%\end{itemize}
+%
+%\protect\hypertarget{pglobal}{}{pglobal:}
+%
+%\texttt{}
+%
+%\protect\hyperlink{pglobal}{pglobal}~~::=
+%\protect\hyperlink{ptype}{ptype} \protect\hyperlink{NID}{NID} `='
+%\protect\hyperlink{pgexpr}{pgexpr} `;'
+%
+%referenced by:
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  \protect\hyperlink{top}{top}
+%\end{itemize}
+%
+%\protect\hypertarget{pexec}{}{pexec:}
+%
+%\texttt{}
+%
+%\protect\hyperlink{pexec}{pexec}~~~~::= `exec'
+%\protect\hyperlink{NID}{NID} `(' ( \protect\hyperlink{range}{range} (
+%`,' \protect\hyperlink{range}{range} )* )? `)'
+%
+%referenced by:
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  \protect\hyperlink{top}{top}
+%\end{itemize}
+%
+%\protect\hypertarget{range}{}{range:}
+%
+%\texttt{}
+%
+%\protect\hyperlink{range}{range}~~~~::= \protect\hyperlink{INT}{INT} `:'
+%\protect\hyperlink{INT}{INT}
+%
+%referenced by:
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  \protect\hyperlink{pexec}{pexec}
+%\end{itemize}
+%
+%\protect\hypertarget{from}{}{from:}
+%
+%\texttt{}
+%
+%\protect\hyperlink{from}{from}~~~~~::= `from'
+%\protect\hyperlink{NID}{NID}
+%
+%referenced by:
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  \protect\hyperlink{prequire}{prequire}
+%\end{itemize}
+%
+%\protect\hypertarget{prequire}{}{prequire:}
+%
+%\texttt{}
+%
+%\protect\hyperlink{prequire}{prequire}~::=
+%\protect\hyperlink{from}{from}? `require' `string'+
+%
+%referenced by:
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  \protect\hyperlink{top}{top}
+%\end{itemize}
+%
+%\protect\hypertarget{top}{}{top:}
+%
+%\texttt{}
+%
+%\protect\hyperlink{top}{top}~~~~~~::=
+%\protect\hyperlink{pfundef}{pfundef}
+%
+%~~~~~~~~~~~\textbar{} \protect\hyperlink{pparam}{pparam}
+%
+%~~~~~~~~~~~\textbar{} \protect\hyperlink{pglobal}{pglobal}
+%
+%~~~~~~~~~~~\textbar{} \protect\hyperlink{pexec}{pexec}
+%
+%~~~~~~~~~~~\textbar{} \protect\hyperlink{prequire}{prequire}
+%
+%referenced by:
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  \protect\hyperlink{module_}{module\_}
+%\end{itemize}
+%
+%\protect\hypertarget{module_}{}{module\_:}
+%
+%\texttt{}
+%
+%\protect\hyperlink{module_}{module\_}~~::= \protect\hyperlink{top}{top}*
+%\protect\hyperlink{EOF}{EOF}
+%
+%~~~~~~~~~~~\textbar{} \protect\hyperlink{error}{error}
+%
+%no references
+%
+%\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+%
+%\begin{longtable}[]{@{}lll@{}}
+%\toprule
+%\endhead
+%~ & \ldots{} generated by RR - Railroad Diagram Generator
+%&\tabularnewline
+%\bottomrule
+%\end{longtable}
+%
+%Since version 2022.09.0, Jasmin features a \texttt{\#randombytes}
+%\emph{systemcall}. Here is a small example using it, that return a byte
+%(which one I cannot tell):
+%
+%\begin{verbatim}
+%export
+%fn randombyte() -> reg u8 {
+%    stack u8[1] buf;
+%    reg u8 r;
+%    buf = #randombytes(buf);
+%    r = buf[0];
+%    return r;
+%}
+%\end{verbatim}
+%
+%The \texttt{\#randombytes} Jasmin function receives an array --- whose
+%contents need not be initialized before the call --- and returns an
+%array, of the same type as the one given as argument, fully initialized.
+%The contents of the returned array is not specified. Formally, the
+%behavior of the \texttt{\#randombytes} function is modeled as a
+%deterministic function in a state monad: calling it from a given state,
+%returns an array and the updated state (and there are no other ways to
+%tamper with said state).
+%
+%The compiler emits a call to a
+%\texttt{\_\_jasmin\_syscall\_randombytes\_\_} symbol that shall be
+%resolved at link time. The user of the assembly code is responsible for
+%implementing that function. Its specification is that it receives as
+%first argument a pointer to a valid region of memory whose size is given
+%as second argument and returns its first argument. Argument and returned
+%value are exchanged according to the regular ABI.
+%
+%Proofs in EasyCrypt about programs calling \texttt{\#randombytes} need
+%to specify its properties. To this end, the compiler produces an
+%EasyCrypt model that is parametrized by a theory defining the various
+%\texttt{randombytes} calls performed in the program; proofs shall be
+%done relative to an instance of that theory.
+%
+%Regarding constant-time security, arguments to \texttt{\#randombytes}
+%must be public; its result is considered secret. \# Wish List
+%
+%\hypertarget{arrays-as-argument-of-export-functions}{%
+%\subsection{Arrays as argument of export
+%functions}\label{arrays-as-argument-of-export-functions}}
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  Particularly useful for stateful computations split in several
+%  functions (init/update/finalize)
+%\item
+%  Can be implemented similarly as for internal functions
+%\item
+%  Can be emulated with plain memory accesses, but without the
+%  convenience of arrays
+%\end{itemize}
+%
+%\hypertarget{position-independent-code}{%
+%\subsection{Position-independent code}\label{position-independent-code}}
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  Can a Jasmin program be compiled as a shared object and then
+%  dynamically linked? Maybe. Bug reports welcome.
+%\end{itemize}
+%
+%\hypertarget{arrays-iterators-floating-arrays}{%
+%\subsection{Arrays iterators (floating
+%arrays?)}\label{arrays-iterators-floating-arrays}}
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  Currently, to traverse an array in a \texttt{while} loop, a base
+%  pointer (the array) and an index must be kept in two registers.
+%\item
+%  It would save a register to be able to directly increment the base
+%  pointer (and compare it with a pointer to the end of the slice).
+%\item
+%  Packing two or four such base pointers in a \texttt{u128} or
+%  \texttt{u256} variable could make it possible to emit
+%  \texttt{VPGATHERxx} instructions. \# Word-Sized Integers (aka. wint)
+%\end{itemize}
+%
+%\emph{Caveat: this description applies to Jasmin versions 2025.05.0 and
+%more recent}
+%
+%Word-sized integers are Jasmin values that behave like (mathematical)
+%integers (of type \texttt{int}) and have statically known bounds so that
+%they can be represented using machine words. Dually, they are machine
+%words that are always interpreted as integers, either with the signed
+%interpretation (two's complement) or with the unsigned interpretation.
+%
+%For instance a value declared with type \texttt{si8} is an integer in
+%%the range {[}−128; 127{]} represented as an 8-bit machine word.
+%
+%The fact these values stay within their given range is the
+%responsibility of the programmer (and neither the one of the language
+%nor of the compiler): it is wrong to write programs in which such
+%integers overflow. Yet, this is possible: do not forget to argue about
+%the safety of Jasmin programs.
+%
+%The key feature of these data types are for the extraction to EasyCrypt:
+%they are extracted to \texttt{int}, removing the need to deal with
+%modulus 2\^{}XX operations.
+%
+%\hypertarget{syntax}{%
+%\subsection{Syntax}\label{syntax}}
+%
+%The following types describe wint values. Interpreted in a range of
+%%non-negative numbers {[}0; 2ⁿ−1{]}: \texttt{ui8}, \texttt{ui16},
+%\texttt{ui32}, \texttt{ui64}, \texttt{ui128}, \texttt{ui256}.
+%%Interpreted in a range centered on zero {[}−2ⁿ / 2; 2ⁿ / 2 − 1{]}:
+%\texttt{si8}, \texttt{si16}, \texttt{si32}, \texttt{si64},
+%\texttt{si128}, \texttt{si256}.
+%
+%The following operations are available on wint values.
+%
+%\begin{itemize}
+%\tightlist
+%\item
+%  Size-extension / truncation: \texttt{(64ui)a}, \texttt{(8si)b}
+%\item
+%  Negation: `- b\texttt{is\ the\ opposite\ of}b`
+%\item
+%  Addition and subtraction: \texttt{+}, \texttt{-}
+%\item
+%  Multiplication, division, remainder: \texttt{*}, \texttt{/},
+%  \texttt{\%} (the sign of the result of the remainder operator is the
+%  same as the sign of its first operand)
+%\item
+%  Left and right shifts: \texttt{\textless{}\textless{}},
+%  \texttt{\textgreater{}\textgreater{}}
+%\item
+%  Comparisons for equality (\texttt{==} and \texttt{!=}) and ordering
+%  (\texttt{\textless{}}, \texttt{\textless{}=}, \texttt{\textgreater{}},
+%  \texttt{\textgreater{}=})
+%\end{itemize}
+%
+%All operators can be decorated with an optional suffix making explicit
+%the signedness --- for instance \texttt{0\ \textless{}=s\ b} --- or both
+%the size and signedness --- for instance \texttt{a\ +\ 32ui\ a}.
+%
+%\hypertarget{safety}{%
+%\subsection{Safety}\label{safety}}
+%
+%All operators producing wint values assert, according to Jasmin
+%semantics, that their result is in the expected range. Execution is
+%stuck if said assertion fails: it is wrong to write programs in which
+%such failures could happen.
+%
+%\hypertarget{conversion}{%
+%\subsection{Conversion}\label{conversion}}
+%
+%Values of wint types can safely be converted to and from machine words
+%using explicit (prefix) conversion operators such as \texttt{(32u)} and
+%\texttt{(16si)}.
+%
+%There is no operator to change the signedness of a wint value: it should
+%explicitly be converted to a machine-word and back to a wint.
+%
+%These values can also be converted to and from (unbounded) \texttt{int}
+%values. Conversion to int is safe and performed through the prefix
+%\texttt{(int)} operator or its more specific variants \texttt{(sint)}
+%and \texttt{(uint)}. Conversion from \texttt{int} is subject to safety
+%conditions (the value must lie in the target range) and is performed
+%through a prefix operator such as \texttt{(8si)}.
+%
+%\hypertarget{compilation}{%
+%\subsection{Compilation}\label{compilation}}
+%
+%During compilation, wint values are turned into machine words of the
+%corresponding size and range assertions are dropped.
+%
+%\hypertarget{verification}{%
+%\subsection{Verification}\label{verification}}
+%
+%Knowing that wint operations cannot overflow, they can be safely modeled
+%in EasyCrypt using straightforward operations over integers. Therefore,
+%prior to extraction to EasyCrypt, wint values are turned into integers.
+%
+%\hypertarget{branches-in-the-jasmin-git-repository}{%
+%\section{Branches in the jasmin git
+%repository}\label{branches-in-the-jasmin-git-repository}}
+%
+%\hypertarget{major-branches}{%
+%\subsection{Major branches}\label{major-branches}}
+%
+%\hypertarget{main}{%
+%\subsubsection{main}\label{main}}
+%
+%%\href{https://gitlab.com/jasmin-lang/jasmin/-/commits/main}{\includegraphics{https://gitlab.com/jasmin-lang/jasmin/badges/main/pipeline.svg}}
+%
+%This is Jasmin, with all theorems proved
+%
+%\hypertarget{current-development}{%
+%\subsection{Current development}\label{current-development}}
+%
+%\hypertarget{generic}{%
+%\subsubsection{generic}\label{generic}}
+%
+%Generic functions, branched from glob\_array3
+%
+%\hypertarget{side-projects}{%
+%\subsection{Side projects}\label{side-projects}}
+%
+%\hypertarget{constant-time-constant-time-op}{%
+%\subsubsection{constant-time,
+%constant-time-op}\label{constant-time-constant-time-op}}
+%
+%Preservation of the Constant-Time security property
+%
+%Branched from master on 2020-02-13, following release-21
+%
+%\hypertarget{checking-sct}{%
+%\subsubsection{checking-sct}\label{checking-sct}}
+%
+%Checking for speculative safety and speculative constant-time
+%
+%\hypertarget{pipeline-analysis}{%
+%\subsubsection{pipeline-analysis}\label{pipeline-analysis}}
+%
+%Cost analysis of low-level Jasmin programs using precise models of the
+%micro-architecture
+%
+%\hypertarget{utility-branches}{%
+%\subsection{Utility branches}\label{utility-branches}}
+%
+%\hypertarget{dpdgraph}{%
+%\subsubsection{dpdgraph}\label{dpdgraph}}
+%
+%Use dpdgraph to find dead code and unused lemmas.
+%
+%\hypertarget{continuous-integration-on-gitlab.com}{%
+%\section{Continuous Integration on
+%gitlab.com}\label{continuous-integration-on-gitlab.com}}
+%
+%The repository at \url{https://gitlab.com/jasmin-lang/jasmin} is a
+%mirror of the main repository hosted on \url{https://github.com}. Its
+%purpose is to enable the continuous integration pipeline described in
+%the \texttt{.gitlab-ci.yml} configuration file.
+%
+%\hypertarget{ci-targets}{%
+%\subsection{CI Targets}\label{ci-targets}}
+%
+%\begin{longtable}[]{@{}lll@{}}
+%\toprule
+%\begin{minipage}[b]{0.46\columnwidth}\raggedright
+%Target name\strut
+%\end{minipage} & \begin{minipage}[b]{0.33\columnwidth}\raggedright
+%Body\strut
+%\end{minipage} & \begin{minipage}[b]{0.13\columnwidth}\raggedright
+%Goal\strut
+%\end{minipage}\tabularnewline
+%\midrule
+%\endhead
+%\begin{minipage}[t]{0.46\columnwidth}\raggedright
+%coq\strut
+%\end{minipage} & \begin{minipage}[t]{0.33\columnwidth}\raggedright
+%compiles all the Coq files, calls the extraction and puts the resulting
+%\texttt{.ml\{,i\}} files in subdirectory \texttt{CIL/} in
+%\texttt{compiler/}\strut
+%\end{minipage} & \begin{minipage}[t]{0.13\columnwidth}\raggedright
+%checks that all the \texttt{.v} files compile and that extraction
+%works\strut
+%\end{minipage}\tabularnewline
+%\begin{minipage}[t]{0.46\columnwidth}\raggedright
+%ocaml\strut
+%\end{minipage} & \begin{minipage}[t]{0.33\columnwidth}\raggedright
+%compiles the Jasmin compiler based on what was done by target
+%\texttt{coq}\strut
+%\end{minipage} & \begin{minipage}[t]{0.13\columnwidth}\raggedright
+%checks that we can indeed produce the executable \texttt{jasminc}\strut
+%\end{minipage}\tabularnewline
+%\begin{minipage}[t]{0.46\columnwidth}\raggedright
+%check\strut
+%\end{minipage} & \begin{minipage}[t]{0.33\columnwidth}\raggedright
+%calls the compiler produced by \texttt{ocaml} on the tests contained in
+%directories \texttt{tests/} and \texttt{examples/}\strut
+%\end{minipage} & \begin{minipage}[t]{0.13\columnwidth}\raggedright
+%checks that we have no regression in Jasmin from the user point of
+%view\strut
+%\end{minipage}\tabularnewline
+%\begin{minipage}[t]{0.46\columnwidth}\raggedright
+%cryptolib\strut
+%\end{minipage} & \begin{minipage}[t]{0.33\columnwidth}\raggedright
+%calls the compiler produced by \texttt{ocaml} on the programs
+%implemented in cryptolib\strut
+%\end{minipage} & \begin{minipage}[t]{0.13\columnwidth}\raggedright
+%same purpose as \texttt{check}, but on larger and real programs\strut
+%\end{minipage}\tabularnewline
+%\begin{minipage}[t]{0.46\columnwidth}\raggedright
+%eclib\strut
+%\end{minipage} & \begin{minipage}[t]{0.33\columnwidth}\raggedright
+%calls EasyCrypt on the files in sub-directory \texttt{eclib/}\strut
+%\end{minipage} & \begin{minipage}[t]{0.13\columnwidth}\raggedright
+%checks that we write valid EasyCrypt code in the files in
+%\texttt{eclib/}\strut
+%\end{minipage}\tabularnewline
+%\begin{minipage}[t]{0.46\columnwidth}\raggedright
+%opam\strut
+%\end{minipage} & \begin{minipage}[t]{0.33\columnwidth}\raggedright
+%installs the dependencies of Jasmin using opam, compiles Jasmin in this
+%environment and produces an artefact\strut
+%\end{minipage} & \begin{minipage}[t]{0.13\columnwidth}\raggedright
+%checks that the opam file is correct\strut
+%\end{minipage}\tabularnewline
+%\begin{minipage}[t]{0.46\columnwidth}\raggedright
+%tarball\strut
+%\end{minipage} & \begin{minipage}[t]{0.33\columnwidth}\raggedright
+%creates a tarball using \texttt{make\ dist} and pushes it as an
+%artefact\strut
+%\end{minipage} & \begin{minipage}[t]{0.13\columnwidth}\raggedright
+%produces a nice tarball to distribute, and checks that the distribution
+%script works\strut
+%\end{minipage}\tabularnewline
+%\begin{minipage}[t]{0.46\columnwidth}\raggedright
+%push-compiler-code\strut
+%\end{minipage} & \begin{minipage}[t]{0.33\columnwidth}\raggedright
+%pushes the OCaml code produced by \texttt{tarball} to another
+%repository\strut
+%\end{minipage} & \begin{minipage}[t]{0.13\columnwidth}\raggedright
+%this allows to have a repo with OCaml-only code, no Coq, that can be
+%helpful both to give as pointer to the users and to debug some
+%bugs\strut
+%\end{minipage}\tabularnewline
+%\bottomrule
+%\end{longtable}
+%
+%\hypertarget{dependency-cache-on-cachix.org}{%
+%\subsection{Dependency cache on
+%cachix.org}\label{dependency-cache-on-cachix.org}}
+%
+%Some of the build dependencies are distributed as source code. Some
+%pre-built binaries are available from \texttt{cache.nixos.org}. Other
+%dependencies are built during the first step of the pipeline and the
+%results are stored on an online public cache described at
+%\url{https://jasmin.cachix.org}.
+%
+%A private signing key is required to write to this cache. It is stored
+%as a protected and masked variable, restricted to the \texttt{cachix}
+%environment. If needed, the cache can be emptied or destroyed. If the
+%secret key needs to be rotated, just create a fresh cache and update the
+%value of the variable to the new key. (Using \texttt{gitlab.com} web
+%interface, navigate to ``Settings'' → ``CI / CD'' → ``Variables''.)
+%
+%The corresponding public keys are written in the \texttt{.gitlab-ci.yml}
+%file.
+%
+%\hypertarget{the-ocaml-only-jasmin-compiler-git-repository}{%
+%\subsection{\texorpdfstring{The OCaml-only \texttt{jasmin-compiler} git
+%repository}{The OCaml-only jasmin-compiler git repository}}\label{the-ocaml-only-jasmin-compiler-git-repository}}
+%
+%At the end of successful pipelines for protected branches, the OCaml
+%source code (included the part extracted from Coq files) is committed to
+%the \url{https://gitlab.com/jasmin-lang/jasmin-compiler/} git
+%repository.
+%
+%There is a SSH key-pair allowing the CI machine to write to that
+%repository. The private key is held in a protected variable of the
+%\texttt{jasmin-lang/jasmin} repository on \texttt{gitlab.com}; said
+%variable is restricted to the \texttt{deployment} environment. The
+%public key is set as a ``deploy key'' with write access for the
+%\texttt{jasmin-lang/jasmin-compiler} repository.
+%
+%This key-pair has no other use (so it can be easily rotated).
+%
+%\hypertarget{check-list-when-preparing-a-release}{%
+%\section{Check-list when preparing a
+%release}\label{check-list-when-preparing-a-release}}
+%
+%\hypertarget{major-releases}{%
+%\subsection{Major releases}\label{major-releases}}
+%
+%\begin{itemize}
+%\tightlist
+%\item[$\square$]
+%  Fork a \texttt{release-YYYY.MM} branch from \texttt{main}
+%\item[$\square$]
+%  Check that CI is working properly on this new branch (is it
+%  ``protected''? etc.)
+%\end{itemize}
+%
+%\hypertarget{all-releases}{%
+%\subsection{All releases}\label{all-releases}}
+%
+%\begin{itemize}
+%\tightlist
+%\item[$\square$]
+%  Check the list of AUTHORS
+%\item[$\square$]
+%  Proof-read the CHANGELOG
+%\item[$\square$]
+%  Fix the \texttt{version\_string}
+%\item[$\square$]
+%  Prepare announcements for the Formosa website
+%\item[$\square$]
+%  Put a tag (and push it to the main git repo)
+%\item[$\square$]
+%  Make a ``release'' on github, with the sources taken from
+%  gitlab.com/jasmin-lang/jasmin-compiler/
+%\item[$\square$]
+%  Publish into software repositories
+%
+%  \begin{itemize}
+%  \tightlist
+%  \item
+%    opam
+%  \item
+%    nixpkgs
+%  \end{itemize}
+%\item[$\square$]
+%  Update CHANGELOG in main to synchronize with the one from the release
+%\end{itemize}
+
+\end{document}

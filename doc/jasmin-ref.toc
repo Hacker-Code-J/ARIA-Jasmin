@@ -1,0 +1,8 @@
+\contentsline {chapter}{\numberline {1}A}{2}{chapter.1}%
+\contentsline {section}{\numberline {1.1}About Jasmin}{2}{section.1.1}%
+\contentsline {section}{\numberline {1.2}Arrays in Jasmin programs}{3}{section.1.2}%
+\contentsline {subsection}{\numberline {1.2.1}Declaration}{3}{subsection.1.2.1}%
+\contentsline {subsection}{\numberline {1.2.2}Access}{3}{subsection.1.2.2}%
+\contentsline {subsubsection}{Explicit Scaling}{3}{section*.2}%
+\contentsline {subsubsection}{Type Punning}{4}{section*.3}%
+\contentsline {subsection}{\numberline {1.2.3}Intuition about `\lstinline [style=jasmin]|reg ptr|' and `\lstinline [style=jasmin]|stack ptr|'}{4}{subsection.1.2.3}%

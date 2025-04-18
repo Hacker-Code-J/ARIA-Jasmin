@@ -1,0 +1,79 @@
+%-------------------------
+% Listing Settings
+%-------------------------
+\usepackage{listings}
+\renewcommand{\lstlistingname}{Code}
+\lstset{
+	basicstyle=\footnotesize\ttfamily,
+	breaklines=true,
+	frame=single,
+	columns=fullflexible,
+	captionpos=b,
+	numbers=left
+}
+\lstdefinestyle{cstyle}{
+	language=C,
+	basicstyle=\small\ttfamily,
+	keywordstyle=\bfseries\color{blue},
+	commentstyle=\itshape\color{teal!70!black},
+	stringstyle=\color{orange!90!black},
+	numbers=left,
+	numbersep=5pt,
+	numberstyle=\tiny\color{gray},
+	columns=fullflexible,
+	showstringspaces=false,
+	breaklines=true,
+	breakatwhitespace=true,
+	escapeinside={(*@}{@*)},
+	frame=single
+}
+\newcommand{\ccode}[2][]{%
+	\lstinputlisting[style=cstyle,#1]{#2}
+}
+\newcommand{\cinline}[1]{%
+	\lstinline[style=cstyle]|#1|%
+}
+\definecolor{OliveGreen}{rgb}{0.33, 0.5, 0.18}
+\definecolor{Blue}{rgb}{0.06, 0.2, 0.65}
+\definecolor{grey}{rgb}{0.43, 0.5, 0.5}
+\lstdefinestyle{jasmin}{
+	mathescape=true,
+	columns=fullflexible,
+	keepspaces=true,
+	captionpos=b,
+	frame=tb,
+	%	xleftmargin=.1\textwidth,
+	%	xrightmargin=.1\textwidth,
+	rangebeginprefix={(**\ begin\ },
+	rangeendprefix={(**\ end\ },
+	rangesuffix={\ *)},
+	includerangemarker=false,
+	basicstyle=\small\sffamily,
+	identifierstyle={},
+	keywordstyle=[1]{\color{OliveGreen}},
+	keywordstyle=[2]{\color{keyword}\bfseries},
+	keywordstyle=[3]{\color{Blue}},
+	keywordstyle=[4]{\bfseries\color{OliveGreen}},
+	keywordstyle=[5]{\color{Red}},
+	keywordstyle=[6]{\color{golden}},
+	keywordstyle=[7]{\bfseries\color{magenta}},
+	%	morekeywords=[7]{xor, aes, enc, dec},
+	morekeywords=[2]{fn,for,to,downto,if,else,do,while,return,param},
+	morekeywords=[3]{u256,u128,u64,u32,u16,u8,bool,int},
+	morekeywords=[1]{reg,stack,inline,export},
+	comment=[l][\color{grey}]{//},
+	morecomment=[s][\color{grey}]{/*}{*/},
+	alsoletter ={_},
+	literate=
+	{-}{-}{1}%
+	{->}{$\rightarrow$}{1}%
+	{4u64}{4u64}{1}%
+	{>>}{$\gg$}{1}%
+	{<<}{$\ll$}{1}%,
+}[keywords,comments]
+\newcommand{\jasmincode}[2][]{%
+	\lstinputlisting[style=jasmin,#1]{#2}
+}
+\newcommand{\jasmininline}[1]{%
+	\lstinline[style=jasmin]|#1|%
+}

@@ -1,0 +1,17 @@
+Jasmin is a workbench for high-assurance and high-speed cryptography. Jasmin implementations aim at being efficient, safe, correct, and secure.
+
+The Jasmin \textbf{programming language} smoothly combines high-level and low-level constructs, supporting ``assembly in the head'' programming. Programmers can control many low-level details that are performance-critical—such as instruction selection and scheduling, and register spilling—while also leveraging high-level abstractions (variables, functions, arrays, loops, etc.) to structure their code and facilitate formal verification.
+
+The \textbf{semantics} is formally defined to enable rigorous reasoning about program behavior. The Coq definitions can be found in the \texttt{proofs/lang/sem.v} file. This semantics is executable, allowing Jasmin programs to be directly interpreted.
+%\href{Reference-interpreter}{interpreted}.
+
+Jasmin programs can be automatically checked for \textbf{safety} and \textbf{termination} using a trusted 
+static analyzer.
+%\href{Safety-checker}{static analyzer}.
+
+The Jasmin \textbf{compiler} produces predictable assembly and guarantees that the use of high-level abstractions incurs no run-time penalty. It is formally verified for correctness (the precise Coq statement and the corresponding machine-checked proofs are located in the \texttt{proofs/compiler/compiler\_proof.v} file). This ensures that properties proved on the source program—such as safety, termination, and functional correctness—hold for the corresponding assembly program.
+
+The Jasmin workbench leverages the \href{https://www.easycrypt.info/}{EasyCrypt} toolset for \textbf{formal verification}. Jasmin programs can be 
+extracted 
+%\href{Extraction-to-EasyCrypt}{extracted} 
+to corresponding EasyCrypt programs, facilitating proofs of functional correctness, cryptographic security, and constant-time security against side-channel attacks.
