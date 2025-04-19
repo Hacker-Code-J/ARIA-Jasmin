@@ -1,0 +1,68 @@
+inline fn do_encrypt(
+    stack u8[ARIA_BLOCK_SIZE] o_buf,                    // output block
+    stack u8[ARIA_BLOCK_SIZE] pin_buf,                  // input block
+    stack u8[ARIA_MAX_KEYS * ARIA_BLOCK_SIZE] keys_mem, // all round keys
+    inline int rounds                                   // number of rounds
+) {
+    // Temporary state and workspace
+    stack u8[ARIA_BLOCK_SIZE] p;
+    stack u8[ARIA_BLOCK_SIZE] rk;
+    reg u32 i, j, base;
+
+    // 1) Copy input into local state 'p'
+    i = 0;
+    while (i < ARIA_BLOCK_SIZE) {
+        p[i] = pin_buf[i];
+        i = i + 1;
+    }
+
+    // 2) Main rounds: process in pairs (FO then FE)
+    i = 0;
+    while (i < (rounds - 2)) {
+        base = i * ARIA_BLOCK_SIZE;
+        // load round key i into rk
+        j = 0;
+        while (j < ARIA_BLOCK_SIZE) {
+            rk[j] = keys_mem[base + j];
+            j = j + 1;
+        }
+        FO(p, p, rk);
+
+        base = (i + 1) * ARIA_BLOCK_SIZE;
+        j = 0;
+        while (j < ARIA_BLOCK_SIZE) {
+            rk[j] = keys_mem[base + j];
+            j = j + 1;
+        }
+        FE(p, p, rk);
+
+        i = i + 2;
+    }
+
+    // 3) One final FO
+    base = (rounds - 2) * ARIA_BLOCK_SIZE;
+    j = 0;
+    while (j < ARIA_BLOCK_SIZE) {
+        rk[j] = keys_mem[base + j];
+        j = j + 1;
+    }
+    FO(p, p, rk);
+
+    // 4) Final SL2 into output buffer
+    base = (rounds - 1) * ARIA_BLOCK_SIZE;
+    j = 0;
+    while (j < ARIA_BLOCK_SIZE) {
+        rk[j] = keys_mem[base + j];
+        j = j + 1;
+    }
+    sl2(o_buf, p, rk);
+
+    // 5) XOR with last round key
+    base = rounds * ARIA_BLOCK_SIZE;
+    j = 0;
+    while (j < ARIA_BLOCK_SIZE) {
+        rk[j] = keys_mem[base + j];
+        j = j + 1;
+    }
+    xor128(o_buf, o_buf, rk);
+}

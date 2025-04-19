@@ -1,0 +1,176 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Jasmin Implementation of the ARIA Block CIpher Document by Ji, Yong-Hyeon
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[11pt,a4paper]{report}
+\input{#preambles/package}
+\input{#preambles/listings}
+
+%-------------------------
+% Fonts
+%-------------------------
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{newpxtext,newpxmath}
+\usepackage{sectsty}
+
+%-------------------------
+% Header & Footer Settings
+%-------------------------
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\leftmark}
+\fancyhead[R]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\usepackage{background}
+\backgroundsetup{
+	scale=1,  % Scale the image to fit the page
+	color=black,  % Keep the image color as is
+	opacity=.1,  % Fully opaque background
+	angle=0,  % No rotation
+	%	position=current page.south,  % Align to bottom of the page
+	vshift=1cm,  % Adjust vertical alignment if needed
+	%	hshift=0cm,  % Adjust horizontal alignment if needed
+	contents={}
+}
+\newcommand{\setPageBackground}{
+	\backgroundsetup{
+		contents={\includegraphics[scale=4]{images/school-logo}
+		} % Replace with your image
+	}
+}
+
+% Define a rule command for the cover page
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+\begin{document}
+\begin{titlepage}
+	\setPageBackground
+	\centering
+	\vspace*{1cm}
+	
+	% Company logo (optional)
+	%		\includegraphics[width=0.3\textwidth]{logo.png}\par\vspace{1cm}
+	
+	\HRule \\[0.4cm]
+	{\Huge \sffamily \bfseries Jasmin Implementation of\\[0.2cm] the ARIA Block Cipher}\\[0.4cm]
+	\HRule \\[1.5cm]
+	
+	{\Large A Formally Verified Secure Implementation of the ARIA Block Cipher}\\[0.5cm]
+	{\normalsize Utilizing Jasmin for Verified, High‑Performance Cryptographic Primitives}\\[2cm]
+	
+	\begin{flushright}
+		\LARGE {\bfseries Ji, Yong-hyeon} \\ 
+		{\Large\texttt{hacker3740@kookmin.ac.kr}} \\[1.5cm]
+		\large Department of Cyber Security \\
+		Kookmin University \\ [1cm]
+		\today
+	\end{flushright}
+	\vfill
+\end{titlepage}
+
+%-------------------------
+% Table of Contents
+%-------------------------
+{
+	\setcounter{tocdepth}{2}
+	\tableofcontents
+}
+\clearpage	
+
+\chapter{The ARIA Block Cipher}
+
+\section{Introduction}
+\begin{table}[ht]
+	\centering
+	\caption{ARIA Block Cipher Specification}
+	\label{tab:aria-spec}
+	\setstretch{1.25}
+	\begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}ll}
+		\toprule[1.2pt]
+		\textbf{Parameter}         & \textbf{Value} \\ 
+		\midrule
+		Block size                 & 128 bits \\ \hline
+		Key sizes                  & 128, 192, 256 bits \\ \hline
+		Number of rounds           & 12 (128‑bit key) \\
+		& 14 (192‑bit key) \\
+		& 16 (256‑bit key) \\ \hline
+		Structure                  & Substitution–Permutation Network (SPN) \\ \hline
+		S‑boxes                     & Four \(8\times8\) S‑boxes \\
+		& \(S_1, S_2, S_3=S_1^{-1}, S_4=S_2^{-1}\) \\ \hline
+		Diffusion layer            & Involutive linear maps \(M_0\), \(M_1\) \\ \hline
+		Round key size             & 128 bits \\ \hline
+		Round keys per cipher      & \(N_r + 1\) (whitening + rounds) \\ \hline
+		Key schedule               & Derives whitening and round keys via \(M_0\), \(M_1\) \\ \hline
+		Standardization            & ISO/IEC 18033‑3:2010 \\ \hline
+		Designer                   & Korean Information Security Agency (KISA) \\
+		\bottomrule[1.2pt]
+	\end{tabular*}
+\end{table}
+ARIA is a symmetric‑key block cipher standardized as KS X 1213 (2004) and ISO/IEC 18033‑3 (2010). It features a 128‑bit block size, variable key lengths (128/192/256 bits), and an involutive SPN structure that unifies encryption and decryption routines. This manual details its specification, design rationale, and implementation guidelines.
+
+
+ARIA is a substitution–permutation network (SPN) block cipher operating on 128‑bit blocks with key sizes of 128, 192, and 256 bits, using 12, 14, or 16 rounds respectively.
+
+
+\section{History}
+The design phase of ARIA began in late 2003 by a consortium led by KISA, and the algorithm was published as KS X 1213 in 2004 and ratified as ISO/IEC 18033‑3 in 2010.
+
+\section{Features}
+\begin{itemize}
+	\item \textbf{Block size:} 128 bits
+	\item \textbf{Key lengths:} 128, 192, 256 bits
+	\item \textbf{Rounds:} 12, 14, 16 (depending on key size)
+	\item \textbf{Structure:} Involutional Substitution–Permutation Network
+	\item \textbf{S‑boxes:} Two 8×8 involutive S‑boxes (S\(_1\), S\(_2\)) and inverses (S\(_3\)=S\(_1^{-1}\), S\(_4\)=S\(_2^{-1}\))
+	\item \textbf{Diffusion:} 16×16 involutive binary matrix with branch number 8
+	\item \textbf{Key schedule:} 3‑round, 256‑bit Feistel network with constants from $1/\pi$
+	\item \textbf{Whitening:} Initial and final AddRoundKey stages
+	\item \textbf{Security:} Strong against differential, linear, and side‑channel attacks
+\end{itemize}
+
+\section{Structure}
+An ARIA encryption operation consists of:
+\begin{enumerate}
+	\item Initial AddRoundKey (whitening)
+	\item \(N_r\) full rounds (Substitution → Diffusion → AddRoundKey)
+	\item Final AddRoundKey (whitening)
+\end{enumerate}
+
+\subsection{Substitution Layer}
+Each byte of the 128‑bit state passes through one of four 8×8 involutive S‑boxes defined by
+\[
+\begin{aligned}
+	S_1(x) &= B\,x^{-1} \oplus b,\\
+	S_2(x) &= C\,x^{-1} \oplus c,
+\end{aligned}
+\]
+where \(B,C\) are invertible 8×8 matrices and \(b,c\) are 8×1 vectors over GF(\(2^8\)).
+
+\subsection{Diffusion Layer}
+The diffusion layer applies
+\[
+y = A\,x,\quad A^2 = I,
+\]
+with \(A\) a 16×16 involutive binary matrix of branch number 8, ensuring full branch diffusion within two rounds.
+
+\subsection{Key Expansion / AddRoundKey}
+\begin{enumerate}
+	\item Pad the master key \(MK\) to 256 bits (KL‖KR).
+	\item Compute \(\{W_0,\dots,W_3\}\) via a 3‑round Feistel network \(F\) using constants 
+	\(\displaystyle C_1=\texttt{0x517cc1b7…},\;C_2=\texttt{0x6db14acc…},\;C_3=\texttt{0xdb92371d…}\).
+	\item Derive encryption keys \(\mathit{ek}_i\) by rotations ($\lll 19$, $\lll 31$, $\lll 61$) and XORs of the \(W\) words.
+	\item Obtain decryption keys \(\mathit{dk}_i\) by reversing and applying \(A\) to the \(\mathit{ek}_i\).
+\end{enumerate}
+
+%\hypertarget{about-jasmin}{%
+%	\section{About Jasmin}\label{about-jasmin}}
+%\input{A/about-jasmin}
+%
+%\newpage
+%\hypertarget{arrays-in-jasmin-programs}{%
+%	\section{Arrays in Jasmin programs}\label{arrays-in-jasmin-programs}}
+%\input{A/arrays-in-jasmin-programs}
+
+	
+\end{document}

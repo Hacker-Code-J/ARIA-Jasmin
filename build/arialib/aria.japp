@@ -1,42 +1,26 @@
-inline fn rotl32(reg u32 v, inline int r) -> reg u32 {
-  reg u32 res;
-  res = (v << r) | (v >> (32 - r));
-  return res;
-}
-inline fn rotr32(reg u32 v, inline int r) -> reg u32 {
-  reg u32 res;
-  res = (v >> r) | (v << (32 - r));
-  return res;
-}
-inline fn bswap32(reg u32 v) -> reg u32 {
-  reg u32 res;
-  res = ((v & 0x000000FF) << 24) |
-        ((v & 0x0000FF00) << 8) |
-        ((v & 0x00FF0000) >> 8) |
-        ((v & 0xFF000000) >> 24);
-  return res;
-}
-inline fn get_u8_be(reg u128 v, inline int idx) -> reg u8 {
-  reg u8 res;
-  res = (v >> ((15 - idx) * 8)) & 0xFF;
-  return res;
-}
-inline fn make_u32(reg u8 v0, reg u8 v1, reg u8 v2, reg u8 v3) -> reg u32 {
-  stack u8[4] tmp_bytes;
-  reg u32 val32;
-  reg u32 res;
-  tmp_bytes[0] = v0;
-  tmp_bytes[1] = v1;
-  tmp_bytes[2] = v2;
-  tmp_bytes[3] = v3;
-  val32 = tmp_bytes[u32 0];
-  res = bswap32(val32);
-  return res;
-}
-u128 CK1 = 0x517CC1B727220A94FE13ABE8FA9A6EE0;
-u128 CK2 = 0x6DB14ACC9E21C820FF28B1D5EF5DE2B0;
-u128 CK3 = 0xDB92371D2126E9700324977504E8C90E;
-u8[256] S1 = {
+param int ARIA_ENCRYPT = 1;
+param int ARIA_DECRYPT = 0;
+param int ARIA_BLOCK_SIZE = 16;
+param int ARIA_MAX_KEYS = 17;
+u128 c1 = (16u8)[
+  0x51, 0x7c, 0xc1, 0xb7,
+  0x27, 0x22, 0x0a, 0x94,
+  0xfe, 0x13, 0xab, 0xe8,
+  0xfa, 0x9a, 0x6e, 0xe0
+];
+u128 c2 = (16u8)[
+  0x6d, 0xb1, 0x4a, 0xcc,
+  0x9e, 0x21, 0xc8, 0x20,
+  0xff, 0x28, 0xb1, 0xd5,
+  0xef, 0x5d, 0xe2, 0xb0
+];
+u128 c3 = (16u8)[
+  0xdb, 0x92, 0x37, 0x1d,
+  0x21, 0x26, 0xe9, 0x70,
+  0x03, 0x24, 0x97, 0x75,
+  0x04, 0xe8, 0xc9, 0x0e
+];
+u8[256] sb1 = {
   0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5, 0x30, 0x01, 0x67, 0x2b, 0xfe, 0xd7, 0xab, 0x76,
   0xca, 0x82, 0xc9, 0x7d, 0xfa, 0x59, 0x47, 0xf0, 0xad, 0xd4, 0xa2, 0xaf, 0x9c, 0xa4, 0x72, 0xc0,
   0xb7, 0xfd, 0x93, 0x26, 0x36, 0x3f, 0xf7, 0xcc, 0x34, 0xa5, 0xe5, 0xf1, 0x71, 0xd8, 0x31, 0x15,
@@ -53,7 +37,7 @@ u8[256] S1 = {
   0x70, 0x3e, 0xb5, 0x66, 0x48, 0x03, 0xf6, 0x0e, 0x61, 0x35, 0x57, 0xb9, 0x86, 0xc1, 0x1d, 0x9e,
   0xe1, 0xf8, 0x98, 0x11, 0x69, 0xd9, 0x8e, 0x94, 0x9b, 0x1e, 0x87, 0xe9, 0xce, 0x55, 0x28, 0xdf,
   0x8c, 0xa1, 0x89, 0x0d, 0xbf, 0xe6, 0x42, 0x68, 0x41, 0x99, 0x2d, 0x0f, 0xb0, 0x54, 0xbb, 0x16 };
-u8[256] S2 = {
+u8[256] sb2 = {
   0xe2, 0x4e, 0x54, 0xfc, 0x94, 0xc2, 0x4a, 0xcc, 0x62, 0x0d, 0x6a, 0x46, 0x3c, 0x4d, 0x8b, 0xd1,
   0x5e, 0xfa, 0x64, 0xcb, 0xb4, 0x97, 0xbe, 0x2b, 0xbc, 0x77, 0x2e, 0x03, 0xd3, 0x19, 0x59, 0xc1,
   0x1d, 0x06, 0x41, 0x6b, 0x55, 0xf0, 0x99, 0x69, 0xea, 0x9c, 0x18, 0xae, 0x63, 0xdf, 0xe7, 0xbb,
@@ -70,7 +54,7 @@ u8[256] S2 = {
   0xe6, 0x75, 0xa2, 0xef, 0x2c, 0xb2, 0x1c, 0x9f, 0x5d, 0x6f, 0x80, 0x0a, 0x72, 0x44, 0x9b, 0x6c,
   0x90, 0x0b, 0x5b, 0x33, 0x7d, 0x5a, 0x52, 0xf3, 0x61, 0xa1, 0xf7, 0xb0, 0xd6, 0x3f, 0x7c, 0x6d,
   0xed, 0x14, 0xe0, 0xa5, 0x3d, 0x22, 0xb3, 0xf8, 0x89, 0xde, 0x71, 0x1a, 0xaf, 0xba, 0xb5, 0x81 };
-u8[256] S3 = {
+u8[256] sb3 = {
   0x52, 0x09, 0x6a, 0xd5, 0x30, 0x36, 0xa5, 0x38, 0xbf, 0x40, 0xa3, 0x9e, 0x81, 0xf3, 0xd7, 0xfb,
   0x7c, 0xe3, 0x39, 0x82, 0x9b, 0x2f, 0xff, 0x87, 0x34, 0x8e, 0x43, 0x44, 0xc4, 0xde, 0xe9, 0xcb,
   0x54, 0x7b, 0x94, 0x32, 0xa6, 0xc2, 0x23, 0x3d, 0xee, 0x4c, 0x95, 0x0b, 0x42, 0xfa, 0xc3, 0x4e,
@@ -87,7 +71,7 @@ u8[256] S3 = {
   0x60, 0x51, 0x7f, 0xa9, 0x19, 0xb5, 0x4a, 0x0d, 0x2d, 0xe5, 0x7a, 0x9f, 0x93, 0xc9, 0x9c, 0xef,
   0xa0, 0xe0, 0x3b, 0x4d, 0xae, 0x2a, 0xf5, 0xb0, 0xc8, 0xeb, 0xbb, 0x3c, 0x83, 0x53, 0x99, 0x61,
   0x17, 0x2b, 0x04, 0x7e, 0xba, 0x77, 0xd6, 0x26, 0xe1, 0x69, 0x14, 0x63, 0x55, 0x21, 0x0c, 0x7d };
-u8[256] S4 = {
+u8[256] sb4 = {
   0x30, 0x68, 0x99, 0x1b, 0x87, 0xb9, 0x21, 0x78, 0x50, 0x39, 0xdb, 0xe1, 0x72, 0x09, 0x62, 0x3c,
   0x3e, 0x7e, 0x5e, 0x8e, 0xf1, 0xa0, 0xcc, 0xa3, 0x2a, 0x1d, 0xfb, 0xb6, 0xd6, 0x20, 0xc4, 0x8d,
   0x81, 0x65, 0xf5, 0x89, 0xcb, 0x9d, 0x77, 0xc6, 0x57, 0x43, 0x56, 0x17, 0xd4, 0x40, 0x1a, 0x4d,
@@ -104,87 +88,218 @@ u8[256] S4 = {
   0xb2, 0x0f, 0xc9, 0x1c, 0xa6, 0xbc, 0xec, 0x73, 0x90, 0x7b, 0xcf, 0x59, 0x8f, 0xa1, 0xf9, 0x2d,
   0xf2, 0xb1, 0x00, 0x94, 0x37, 0x9f, 0xd0, 0x2e, 0x9c, 0x6e, 0x28, 0x3f, 0x80, 0xf0, 0x3d, 0xd3,
   0x25, 0x8a, 0xb5, 0xe7, 0x42, 0xb3, 0xc7, 0xea, 0xf7, 0x4c, 0x11, 0x33, 0x03, 0xa2, 0xac, 0x60 };
-inline fn S1_lookup(reg u8 idx) -> reg u8 {
-  reg u8 r;
-  r = S1[idx];
-  return r;
+inline fn xor128(
+    stack u8[ARIA_BLOCK_SIZE] o,
+    stack u8[ARIA_BLOCK_SIZE] x,
+    stack u8[ARIA_BLOCK_SIZE] y
+) {
+    inline int i;
+    for i = 0 to ARIA_BLOCK_SIZE - 1 {
+        o[i] = x[i] ^ y[i];
+    }
 }
-inline fn S2_lookup(reg u8 idx) -> reg u8 {
-  reg u8 r;
-  r = S2[idx];
-  return r;
+inline fn rotnr(
+    reg u32 n,
+    stack u8[ARIA_BLOCK_SIZE] o,
+    stack u8[ARIA_BLOCK_SIZE] xor_src,
+    stack u8[ARIA_BLOCK_SIZE] z_src
+) {
+    inline int bytes = n / 8;
+    inline int bits = n % 8;
+    inline int i;
+    stack u8[ARIA_BLOCK_SIZE] t;
+    for i = 0 to ARIA_BLOCK_SIZE - 1 {
+        t[(i + bytes) % ARIA_BLOCK_SIZE] = z_src[i];
+    }
+    for i = 0 to ARIA_BLOCK_SIZE - 1 {
+        inline int prev = (i == 0) ? ARIA_BLOCK_SIZE - 1 : i - 1;
+        o[i] = ((t[i] >> bits) |
+               (t[prev] << (8 - bits))) ^
+               xor_src[i];
+    }
 }
-inline fn S3_lookup(reg u8 idx) -> reg u8 {
-  reg u8 r;
-  r = S3[idx];
-  return r;
+inline fn rot19r(
+    stack u8[ARIA_BLOCK_SIZE] o,
+    stack u8[ARIA_BLOCK_SIZE] xor_src,
+    stack u8[ARIA_BLOCK_SIZE] z_src
+) {
+    rotnr(19, o, xor_src, z_src);
 }
-inline fn S4_lookup(reg u8 idx) -> reg u8 {
-  reg u8 r;
-  r = S4[idx];
-  return r;
+inline fn rot31r(
+    stack u8[ARIA_BLOCK_SIZE] o,
+    stack u8[ARIA_BLOCK_SIZE] xor_src,
+    stack u8[ARIA_BLOCK_SIZE] z_src
+) {
+    rotnr(31, o, xor_src, z_src);
 }
-inline fn EXTRACT_BYTE(reg u128 state, reg u8 idx) -> reg u8 {
-  reg u8 r;
-  r = (state >> (idx * 8)) & 0xff;
-  return r;
+inline fn rot61l(
+    stack u8[ARIA_BLOCK_SIZE] o,
+    stack u8[ARIA_BLOCK_SIZE] xor_src,
+    stack u8[ARIA_BLOCK_SIZE] z_src
+) {
+    rotnr(67, o, xor_src, z_src);
 }
-inline fn SubBytes(reg u128 state, reg u8 sbox) -> reg u128 {
-  reg u8 b0, b1, b2, b3, b4, b5, b6, b7;
-  reg u8 b8, b9, b10, b11, b12, b13, b14, b15;
-  reg u8 r0, r1, r2, r3, r4, r5, r6, r7;
-  reg u8 r8, r9, r10, r11, r12, r13, r14, r15;
-  reg u128 out;
-  b0 = EXTRACT_BYTE(state, 0); b1 = EXTRACT_BYTE(state, 1);
-  b2 = EXTRACT_BYTE(state, 2); b3 = EXTRACT_BYTE(state, 3);
-  b4 = EXTRACT_BYTE(state, 4); b5 = EXTRACT_BYTE(state, 5);
-  b6 = EXTRACT_BYTE(state, 6); b7 = EXTRACT_BYTE(state, 7);
-  b8 = EXTRACT_BYTE(state, 8); b9 = EXTRACT_BYTE(state, 9);
-  b10 = EXTRACT_BYTE(state, 10); b11 = EXTRACT_BYTE(state, 11);
-  b12 = EXTRACT_BYTE(state, 12); b13 = EXTRACT_BYTE(state, 13);
-  b14 = EXTRACT_BYTE(state, 14); b15 = EXTRACT_BYTE(state, 15);
-  if (sbox == 1) {
-    r0 = S1_lookup(b0); r1 = S1_lookup(b1);
-    r2 = S1_lookup(b2); r3 = S1_lookup(b3);
-    r4 = S1_lookup(b4); r5 = S1_lookup(b5);
-    r6 = S1_lookup(b6); r7 = S1_lookup(b7);
-    r8 = S1_lookup(b8); r9 = S1_lookup(b9);
-    r10 = S1_lookup(b10); r11 = S1_lookup(b11);
-    r12 = S1_lookup(b12); r13 = S1_lookup(b13);
-    r14 = S1_lookup(b14); r15 = S1_lookup(b15);
-  } else if (sbox == 2) {
-    r0 = S2_lookup(b0); r1 = S2_lookup(b1);
-    r2 = S2_lookup(b2); r3 = S2_lookup(b3);
-    r4 = S2_lookup(b4); r5 = S2_lookup(b5);
-    r6 = S2_lookup(b6); r7 = S2_lookup(b7);
-    r8 = S2_lookup(b8); r9 = S2_lookup(b9);
-    r10 = S2_lookup(b10); r11 = S2_lookup(b11);
-    r12 = S2_lookup(b12); r13 = S2_lookup(b13);
-    r14 = S2_lookup(b14); r15 = S2_lookup(b15);
-  } else if (sbox == 3) {
-    r0 = S3_lookup(b0); r1 = S3_lookup(b1);
-    r2 = S3_lookup(b2); r3 = S3_lookup(b3);
-    r4 = S3_lookup(b4); r5 = S3_lookup(b5);
-    r6 = S3_lookup(b6); r7 = S3_lookup(b7);
-    r8 = S3_lookup(b8); r9 = S3_lookup(b9);
-    r10 = S3_lookup(b10); r11 = S3_lookup(b11);
-    r12 = S3_lookup(b12); r13 = S3_lookup(b13);
-    r14 = S3_lookup(b14); r15 = S3_lookup(b15);
-  } else if (sbox == 4) {
-    r0 = S4_lookup(b0); r1 = S4_lookup(b1);
-    r2 = S4_lookup(b2); r3 = S4_lookup(b3);
-    r4 = S4_lookup(b4); r5 = S4_lookup(b5);
-    r6 = S4_lookup(b6); r7 = S4_lookup(b7);
-    r8 = S4_lookup(b8); r9 = S4_lookup(b9);
-    r10 = S4_lookup(b10); r11 = S4_lookup(b11);
-    r12 = S4_lookup(b12); r13 = S4_lookup(b13);
-    r14 = S4_lookup(b14); r15 = S4_lookup(b15);
-  }
-  out = (16u8)[
-    r0, r1, r2, r3,
-    r4, r5, r6, r7,
-    r8, r9, r10, r11,
-    r12, r13, r14, r15
-  ];
-  return out;
+inline fn rot31l(
+    stack u8[ARIA_BLOCK_SIZE] o,
+    stack u8[ARIA_BLOCK_SIZE] xor_src,
+    stack u8[ARIA_BLOCK_SIZE] z_src
+) {
+    rotnr(97, o, xor_src, z_src);
+}
+inline fn rot19l(
+    stack u8[ARIA_BLOCK_SIZE] o,
+    stack u8[ARIA_BLOCK_SIZE] xor_src,
+    stack u8[ARIA_BLOCK_SIZE] z_src
+) {
+    rotnr(109, o, xor_src, z_src);
+}
+inline fn sl1(
+    stack u8[ARIA_BLOCK_SIZE] o,
+    stack u8[ARIA_BLOCK_SIZE] x_src,
+    stack u8[ARIA_BLOCK_SIZE] y_src
+) {
+    reg u32 i;
+    i = 0;
+    while (i < ARIA_BLOCK_SIZE) {
+        o[i ] = sb1[ x_src[i ] ^ y_src[i ] ];
+        o[i + 1] = sb2[ x_src[i + 1] ^ y_src[i + 1] ];
+        o[i + 2] = sb3[ x_src[i + 2] ^ y_src[i + 2] ];
+        o[i + 3] = sb4[ x_src[i + 3] ^ y_src[i + 3] ];
+        i = i + 4;
+    }
+}
+inline fn sl2(
+    stack u8[ARIA_BLOCK_SIZE] o,
+    stack u8[ARIA_BLOCK_SIZE] x_src,
+    stack u8[ARIA_BLOCK_SIZE] y_src
+) {
+    reg u32 i;
+    i = 0;
+    while (i < ARIA_BLOCK_SIZE) {
+        o[i ] = sb3[ x_src[i ] ^ y_src[i ] ];
+        o[i + 1] = sb4[ x_src[i + 1] ^ y_src[i + 1] ];
+        o[i + 2] = sb1[ x_src[i + 2] ^ y_src[i + 2] ];
+        o[i + 3] = sb2[ x_src[i + 3] ^ y_src[i + 3] ];
+        i = i + 4;
+    }
+}
+inline fn a(
+    stack u8[ARIA_BLOCK_SIZE] y,
+    stack u8[ARIA_BLOCK_SIZE] x
+) {
+    y[ 0] = x[ 3] ^ x[ 4] ^ x[ 6] ^ x[ 8] ^ x[ 9] ^ x[13] ^ x[14];
+    y[ 1] = x[ 2] ^ x[ 5] ^ x[ 7] ^ x[ 8] ^ x[ 9] ^ x[12] ^ x[15];
+    y[ 2] = x[ 1] ^ x[ 4] ^ x[ 6] ^ x[10] ^ x[11] ^ x[12] ^ x[15];
+    y[ 3] = x[ 0] ^ x[ 5] ^ x[ 7] ^ x[10] ^ x[11] ^ x[13] ^ x[14];
+    y[ 4] = x [0] ^ x[ 2] ^ x[ 5] ^ x[ 8] ^ x[11] ^ x[14] ^ x[15];
+    y[ 5] = x[ 1] ^ x[ 3] ^ x[ 4] ^ x[ 9] ^ x[10] ^ x[14] ^ x[15];
+    y[ 6] = x[ 0] ^ x[ 2] ^ x[ 7] ^ x[ 9] ^ x[10] ^ x[12] ^ x[13];
+    y[ 7] = x[ 1] ^ x[ 3] ^ x[ 6] ^ x[ 8] ^ x[11] ^ x[12] ^ x[13];
+    y[ 8] = x[ 0] ^ x[ 1] ^ x[ 4] ^ x[ 7] ^ x[10] ^ x[13] ^ x[15];
+    y[ 9] = x[ 0] ^ x[ 1] ^ x[ 5] ^ x[ 6] ^ x[11] ^ x[12] ^ x[14];
+    y[10] = x[ 2] ^ x[ 3] ^ x[ 5] ^ x[ 6] ^ x[ 8] ^ x[13] ^ x[15];
+    y[11] = x[ 2] ^ x[ 3] ^ x[ 4] ^ x[ 7] ^ x[ 9] ^ x[12] ^ x[14];
+    y[12] = x[ 1] ^ x[ 2] ^ x[ 6] ^ x[ 7] ^ x[ 9] ^ x[11] ^ x[12];
+    y[13] = x[ 0] ^ x[ 3] ^ x[ 6] ^ x[ 7] ^ x[ 8] ^ x[10] ^ x[13];
+    y[14] = x[ 0] ^ x[ 3] ^ x[ 4] ^ x[ 5] ^ x[ 9] ^ x[11] ^ x[14];
+    y[15] = x[ 1] ^ x[ 2] ^ x[ 4] ^ x[ 5] ^ x[ 8] ^ x[10] ^ x[15];
+}
+inline fn FO(
+    stack u8[ARIA_BLOCK_SIZE] o,
+    stack u8[ARIA_BLOCK_SIZE] d_src,
+    stack u8[ARIA_BLOCK_SIZE] rk_src
+) {
+    stack u8[ARIA_BLOCK_SIZE] y;
+    sl1(y, d_src, rk_src);
+    a(o, y);
+}
+inline fn FE(
+    stack u8[ARIA_BLOCK_SIZE] o,
+    stack u8[ARIA_BLOCK_SIZE] d_src,
+    stack u8[ARIA_BLOCK_SIZE] rk_src
+) {
+    stack u8[ARIA_BLOCK_SIZE] y;
+    sl2(y, d_src, rk_src);
+    a(o, y);
+}
+inline fn do_encrypt(
+    stack ptr u8[ARIA_BLOCK_SIZE] o_buf,
+    stack ptr u8[ARIA_BLOCK_SIZE] pin_buf,
+    stack ptr u8[ARIA_MAX_KEYS * ARIA_BLOCK_SIZE] keys_mem,
+    reg u32 rounds
+) {
+    stack u8[ARIA_BLOCK_SIZE] p;
+    stack u8[ARIA_BLOCK_SIZE] rk;
+    reg u32 i, j, base;
+    i = 0;
+    while (i < ARIA_BLOCK_SIZE) {
+        p[i] = pin_buf[i];
+        i = i + 1;
+    }
+    i = 0;
+    while (i < (rounds - 2)) {
+        base = i * ARIA_BLOCK_SIZE;
+        j = 0;
+        while (j < ARIA_BLOCK_SIZE) {
+            rk[j] = keys_mem[base + j];
+            j = j + 1;
+        }
+        FO(p, p, rk);
+        base = (i + 1) * ARIA_BLOCK_SIZE;
+        j = 0;
+        while (j < ARIA_BLOCK_SIZE) {
+            rk[j] = keys_mem[base + j];
+            j = j + 1;
+        }
+        FE(p, p, rk);
+        i = i + 2;
+    }
+    base = (rounds - 2) * ARIA_BLOCK_SIZE;
+    j = 0;
+    while (j < ARIA_BLOCK_SIZE) {
+        rk[j] = keys_mem[base + j];
+        j = j + 1;
+    }
+    FO(p, p, rk);
+    base = (rounds - 1) * ARIA_BLOCK_SIZE;
+    j = 0;
+    while (j < ARIA_BLOCK_SIZE) {
+        rk[j] = keys_mem[base + j];
+        j = j + 1;
+    }
+    sl2(o_buf, p, rk);
+    base = rounds * ARIA_BLOCK_SIZE;
+    j = 0;
+    while (j < ARIA_BLOCK_SIZE) {
+        rk[j] = keys_mem[base + j];
+        j = j + 1;
+    }
+    xor128(o_buf, o_buf, rk);
+}
+inline fn aria_encrypt(
+    reg ptr u8[ARIA_BLOCK_SIZE] in_ptr,
+    reg ptr u8[ARIA_BLOCK_SIZE] out_ptr,
+    reg ptr u8[ARIA_MAX_KEYS * ARIA_BLOCK_SIZE] keys_ptr,
+    inline int rounds
+) {
+    do_encrypt(out_ptr, in_ptr, keys_ptr, rounds);
+}
+inline fn aria_set_encrypt_key(
+    reg ptr u8[ARIA_BLOCK_SIZE] userKey,
+    reg u32 bits,
+    reg ptr u8[ARIA_MAX_KEYS*ARIA_BLOCK_SIZE + 4] key_ptr
+) -> reg u32 {
+    reg u32 ret;
+    reg u32 i, j, base;
+    ret = 0;
+    stack u8[ARIA_BLOCK_SIZE] w0;
+    stack u8[ARIA_BLOCK_SIZE] w1;
+    stack u8[ARIA_BLOCK_SIZE] w2;
+    stack u8[ARIA_BLOCK_SIZE] w3;
+    i = 0;
+    while (i < ARIA_BLOCK_SIZE) {
+        w0[i] = userKey[i];
+        i = i + 1;
+    }
+    return ret;
 }

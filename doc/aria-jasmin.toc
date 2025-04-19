@@ -1,0 +1,8 @@
+\contentsline {chapter}{\numberline {1}The ARIA Block Cipher}{2}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Introduction}{2}{section.1.1}%
+\contentsline {section}{\numberline {1.2}History}{2}{section.1.2}%
+\contentsline {section}{\numberline {1.3}Features}{3}{section.1.3}%
+\contentsline {section}{\numberline {1.4}Structure}{3}{section.1.4}%
+\contentsline {subsection}{\numberline {1.4.1}Substitution Layer}{3}{subsection.1.4.1}%
+\contentsline {subsection}{\numberline {1.4.2}Diffusion Layer}{3}{subsection.1.4.2}%
+\contentsline {subsection}{\numberline {1.4.3}Key Expansion / AddRoundKey}{3}{subsection.1.4.3}%

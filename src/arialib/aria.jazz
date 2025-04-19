@@ -1,63 +1,38 @@
 /* Jasmin Implementation of ARIA‑128 Block Cipher */
-/* This implementation mirrors the structure of the AES‑NI‐based AES example:
-   - Separate key‑schedule and round functions
-   - Inline helpers, register arrays, and stack temporaries
-*/
+/* Reference: https://github.com/openssl/openssl/blob/master/crypto/aria/aria.c */
 
-/* 32-bit rotates */
-inline fn rotl32(reg u32 v, inline int r) -> reg u32 {
-  reg u32 res;
-  res = (v << r) | (v >> (32 - r));
-  return res;
-}
+// Parameters
+param int ARIA_ENCRYPT    = 1;
+param int ARIA_DECRYPT    = 0;
 
-inline fn rotr32(reg u32 v, inline int r) -> reg u32 {
-  reg u32 res;
-  res = (v >> r) | (v << (32 - r));
-  return res;
-}
+// Block and key sizes
+param int ARIA_BLOCK_SIZE = 16;  // bytes per block
+param int ARIA_MAX_KEYS   = 17;  // worst‑case number of round keys
 
-/* 32-bit byte-swap (bswap32) */
-inline fn bswap32(reg u32 v) -> reg u32 {
-  reg u32 res;
-  res = ((v & 0x000000FF) << 24) |
-        ((v & 0x0000FF00) << 8)  |
-        ((v & 0x00FF0000) >> 8)  |
-        ((v & 0xFF000000) >> 24);
-  return res;
-}
+// Round constants for ARIA‑128 (16 bytes each)
+u128 c1 = (16u8)[
+  0x51, 0x7c, 0xc1, 0xb7,
+  0x27, 0x22, 0x0a, 0x94,
+  0xfe, 0x13, 0xab, 0xe8,
+  0xfa, 0x9a, 0x6e, 0xe0
+];
 
-/* Extract big-endian byte GET_U8+BE(X, Y) */
-inline fn get_u8_be(reg u128 v, inline int idx) -> reg u8 {
-  reg u8 res;
-  res = (v >> ((15 - idx) * 8)) & 0xFF;
-  return res;
-}
+u128 c2 = (16u8)[
+  0x6d, 0xb1, 0x4a, 0xcc,
+  0x9e, 0x21, 0xc8, 0x20,
+  0xff, 0x28, 0xb1, 0xd5,
+  0xef, 0x5d, 0xe2, 0xb0
+];
 
-/* Build u32 from four bytes MAKE_U32(V0, V1, V2, V3) */
-inline fn make_u32(reg u8 v0, reg u8 v1, reg u8 v2, reg u8 v3) -> reg u32 {
-  stack u8[4] tmp_bytes;          /* 4‑byte temp */
-  reg u32 val32;                  /* 4‑byte value */
-  reg u32 res;                    /* 4‑byte result */
-  
-  tmp_bytes[0] = v0;
-  tmp_bytes[1] = v1;
-  tmp_bytes[2] = v2;
-  tmp_bytes[3] = v3;
+u128 c3 = (16u8)[
+  0xdb, 0x92, 0x37, 0x1d,
+  0x21, 0x26, 0xe9, 0x70,
+  0x03, 0x24, 0x97, 0x75,
+  0x04, 0xe8, 0xc9, 0x0e
+];
 
-  val32 = tmp_bytes[u32 0];       /* load LE word from tmp_bytes */
-
-  res   = bswap32(val32);         /* to BE */
-  return res;
-}
-
-/* 1. Round Constants (CK) — RFC 5794 §3.2 */
-u128 CK1 = 0x517CC1B727220A94FE13ABE8FA9A6EE0;
-u128 CK2 = 0x6DB14ACC9E21C820FF28B1D5EF5DE2B0;
-u128 CK3 = 0xDB92371D2126E9700324977504E8C90E;
-
-/* 2. S‑Box Tables (256‑byte each) */
-u8[256] S1 = { 
+// Sbox for ARIA‑128
+u8[256] sb1 = { 
   0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5, 0x30, 0x01, 0x67, 0x2b, 0xfe, 0xd7, 0xab, 0x76,
   0xca, 0x82, 0xc9, 0x7d, 0xfa, 0x59, 0x47, 0xf0, 0xad, 0xd4, 0xa2, 0xaf, 0x9c, 0xa4, 0x72, 0xc0,
   0xb7, 0xfd, 0x93, 0x26, 0x36, 0x3f, 0xf7, 0xcc, 0x34, 0xa5, 0xe5, 0xf1, 0x71, 0xd8, 0x31, 0x15,
@@ -74,7 +49,7 @@ u8[256] S1 = {
   0x70, 0x3e, 0xb5, 0x66, 0x48, 0x03, 0xf6, 0x0e, 0x61, 0x35, 0x57, 0xb9, 0x86, 0xc1, 0x1d, 0x9e,
   0xe1, 0xf8, 0x98, 0x11, 0x69, 0xd9, 0x8e, 0x94, 0x9b, 0x1e, 0x87, 0xe9, 0xce, 0x55, 0x28, 0xdf,
   0x8c, 0xa1, 0x89, 0x0d, 0xbf, 0xe6, 0x42, 0x68, 0x41, 0x99, 0x2d, 0x0f, 0xb0, 0x54, 0xbb, 0x16 };
-u8[256] S2 = { 
+u8[256] sb2 = { 
   0xe2, 0x4e, 0x54, 0xfc, 0x94, 0xc2, 0x4a, 0xcc, 0x62, 0x0d, 0x6a, 0x46, 0x3c, 0x4d, 0x8b, 0xd1,
   0x5e, 0xfa, 0x64, 0xcb, 0xb4, 0x97, 0xbe, 0x2b, 0xbc, 0x77, 0x2e, 0x03, 0xd3, 0x19, 0x59, 0xc1,
   0x1d, 0x06, 0x41, 0x6b, 0x55, 0xf0, 0x99, 0x69, 0xea, 0x9c, 0x18, 0xae, 0x63, 0xdf, 0xe7, 0xbb,
@@ -91,7 +66,7 @@ u8[256] S2 = {
   0xe6, 0x75, 0xa2, 0xef, 0x2c, 0xb2, 0x1c, 0x9f, 0x5d, 0x6f, 0x80, 0x0a, 0x72, 0x44, 0x9b, 0x6c,
   0x90, 0x0b, 0x5b, 0x33, 0x7d, 0x5a, 0x52, 0xf3, 0x61, 0xa1, 0xf7, 0xb0, 0xd6, 0x3f, 0x7c, 0x6d,
   0xed, 0x14, 0xe0, 0xa5, 0x3d, 0x22, 0xb3, 0xf8, 0x89, 0xde, 0x71, 0x1a, 0xaf, 0xba, 0xb5, 0x81 };
-u8[256] S3 = { 
+u8[256] sb3 = { 
   0x52, 0x09, 0x6a, 0xd5, 0x30, 0x36, 0xa5, 0x38, 0xbf, 0x40, 0xa3, 0x9e, 0x81, 0xf3, 0xd7, 0xfb,
   0x7c, 0xe3, 0x39, 0x82, 0x9b, 0x2f, 0xff, 0x87, 0x34, 0x8e, 0x43, 0x44, 0xc4, 0xde, 0xe9, 0xcb,
   0x54, 0x7b, 0x94, 0x32, 0xa6, 0xc2, 0x23, 0x3d, 0xee, 0x4c, 0x95, 0x0b, 0x42, 0xfa, 0xc3, 0x4e,
@@ -108,7 +83,7 @@ u8[256] S3 = {
   0x60, 0x51, 0x7f, 0xa9, 0x19, 0xb5, 0x4a, 0x0d, 0x2d, 0xe5, 0x7a, 0x9f, 0x93, 0xc9, 0x9c, 0xef,
   0xa0, 0xe0, 0x3b, 0x4d, 0xae, 0x2a, 0xf5, 0xb0, 0xc8, 0xeb, 0xbb, 0x3c, 0x83, 0x53, 0x99, 0x61,
   0x17, 0x2b, 0x04, 0x7e, 0xba, 0x77, 0xd6, 0x26, 0xe1, 0x69, 0x14, 0x63, 0x55, 0x21, 0x0c, 0x7d };
-u8[256] S4 = { 
+u8[256] sb4 = { 
   0x30, 0x68, 0x99, 0x1b, 0x87, 0xb9, 0x21, 0x78, 0x50, 0x39, 0xdb, 0xe1, 0x72, 0x09, 0x62, 0x3c,
   0x3e, 0x7e, 0x5e, 0x8e, 0xf1, 0xa0, 0xcc, 0xa3, 0x2a, 0x1d, 0xfb, 0xb6, 0xd6, 0x20, 0xc4, 0x8d,
   0x81, 0x65, 0xf5, 0x89, 0xcb, 0x9d, 0x77, 0xc6, 0x57, 0x43, 0x56, 0x17, 0xd4, 0x40, 0x1a, 0x4d,
@@ -126,238 +101,315 @@ u8[256] S4 = {
   0xf2, 0xb1, 0x00, 0x94, 0x37, 0x9f, 0xd0, 0x2e, 0x9c, 0x6e, 0x28, 0x3f, 0x80, 0xf0, 0x3d, 0xd3,
   0x25, 0x8a, 0xb5, 0xe7, 0x42, 0xb3, 0xc7, 0xea, 0xf7, 0x4c, 0x11, 0x33, 0x03, 0xa2, 0xac, 0x60 };
 
-/* 3. Vector SubBytes via 16× Lookup
-    Expand the 128‐bit state into 16 bytes, look each up, and reassemble
-*/
-inline fn S1_lookup(reg u8 idx) -> reg u8 {
-  reg u8 r;
-  r = S1[idx];
-  return r;
-}
-inline fn S2_lookup(reg u8 idx) -> reg u8 {
-  reg u8 r;
-  r = S2[idx];
-  return r;
-}
-inline fn S3_lookup(reg u8 idx) -> reg u8 {
-  reg u8 r;
-  r = S3[idx];
-  return r;
-}
-inline fn S4_lookup(reg u8 idx) -> reg u8 {
-  reg u8 r;
-  r = S4[idx];
-  return r;
+//-------------------------------------------------------------------------------
+// xor128: byte‑wise XOR of two 128‑bit values into the result.
+// Safe if o, x, and y overlap.
+//-------------------------------------------------------------------------------
+inline fn xor128(
+    stack u8[ARIA_BLOCK_SIZE] o,      // output byte array
+    stack u8[ARIA_BLOCK_SIZE] x,      // input byte array
+    stack u8[ARIA_BLOCK_SIZE] y       // input byte array (from union’s .c[])
+) {
+    inline int i;
+    for i = 0 to ARIA_BLOCK_SIZE - 1 {
+        o[i] = x[i] ^ y[i];
+    }
 }
 
-inline fn EXTRACT_BYTE(reg u128 state, reg u8 idx) -> reg u8 {
-  reg u8 r;
-  r = (state >> (idx * 8)) & 0xff;
-  return r;
+/*------------------------------------------------------------------------------
+ * Generalized circular rotate right by n bits, then XOR with another block.
+ * Safe for output to overlap inputs.
+ */
+inline fn rotnr(
+    reg u32                            n,
+    stack u8[ARIA_BLOCK_SIZE]          o,    // output bytes
+    stack u8[ARIA_BLOCK_SIZE]          xor_src,
+    stack u8[ARIA_BLOCK_SIZE]          z_src
+) {
+    inline int bytes = n / 8;
+    inline int bits  = n % 8;
+    inline int i;
+
+    // temporary byte buffer for the byte‑rotation
+    stack u8[ARIA_BLOCK_SIZE] t;
+
+    // 1) rotate by whole bytes
+    for i = 0 to ARIA_BLOCK_SIZE - 1 {
+        t[(i + bytes) % ARIA_BLOCK_SIZE] = z_src[i];
+    }
+
+    // 2) rotate bits within each byte, XOR, and store
+    for i = 0 to ARIA_BLOCK_SIZE - 1 {
+        inline int prev = (i == 0) ? ARIA_BLOCK_SIZE - 1 : i - 1;
+        o[i] = ((t[i] >> bits) | 
+               (t[prev] << (8 - bits))) ^ 
+               xor_src[i];
+    }
 }
 
-inline fn SubBytes(reg u128 state, reg u8 sbox) -> reg u128 {
-  reg u8 b0, b1, b2, b3, b4, b5, b6, b7;
-  reg u8 b8, b9, b10, b11, b12, b13, b14, b15;
-  reg u8 r0, r1, r2, r3, r4, r5, r6, r7;
-  reg u8 r8, r9, r10, r11, r12, r13, r14, r15;
-  reg u128 out;
-
-  // extract bytes from state
-  b0 = EXTRACT_BYTE(state, 0); b1 = EXTRACT_BYTE(state, 1);
-  b2 = EXTRACT_BYTE(state, 2); b3 = EXTRACT_BYTE(state, 3);
-  b4 = EXTRACT_BYTE(state, 4); b5 = EXTRACT_BYTE(state, 5);
-  b6 = EXTRACT_BYTE(state, 6); b7 = EXTRACT_BYTE(state, 7);
-  b8 = EXTRACT_BYTE(state, 8); b9 = EXTRACT_BYTE(state, 9);
-  b10 = EXTRACT_BYTE(state, 10); b11 = EXTRACT_BYTE(state, 11);
-  b12 = EXTRACT_BYTE(state, 12); b13 = EXTRACT_BYTE(state, 13);
-  b14 = EXTRACT_BYTE(state, 14); b15 = EXTRACT_BYTE(state, 15);
-
-  // perform table lookup per byte
-  if (sbox == 1) {
-    r0 = S1_lookup(b0);   r1 = S1_lookup(b1);
-    r2 = S1_lookup(b2);   r3 = S1_lookup(b3);
-    r4 = S1_lookup(b4);   r5 = S1_lookup(b5);
-    r6 = S1_lookup(b6);   r7 = S1_lookup(b7);
-    r8 = S1_lookup(b8);   r9 = S1_lookup(b9);
-    r10 = S1_lookup(b10); r11 = S1_lookup(b11);
-    r12 = S1_lookup(b12); r13 = S1_lookup(b13);
-    r14 = S1_lookup(b14); r15 = S1_lookup(b15);
-  } else if (sbox == 2) {
-    r0 = S2_lookup(b0);   r1 = S2_lookup(b1);
-    r2 = S2_lookup(b2);   r3 = S2_lookup(b3);
-    r4 = S2_lookup(b4);   r5 = S2_lookup(b5);
-    r6 = S2_lookup(b6);   r7 = S2_lookup(b7);
-    r8 = S2_lookup(b8);   r9 = S2_lookup(b9);
-    r10 = S2_lookup(b10); r11 = S2_lookup(b11);
-    r12 = S2_lookup(b12); r13 = S2_lookup(b13);
-    r14 = S2_lookup(b14); r15 = S2_lookup(b15);
-  } else if (sbox == 3) {
-    r0 = S3_lookup(b0);   r1 = S3_lookup(b1);
-    r2 = S3_lookup(b2);   r3 = S3_lookup(b3);
-    r4 = S3_lookup(b4);   r5 = S3_lookup(b5);
-    r6 = S3_lookup(b6);   r7 = S3_lookup(b7);
-    r8 = S3_lookup(b8);   r9 = S3_lookup(b9);
-    r10 = S3_lookup(b10); r11 = S3_lookup(b11);
-    r12 = S3_lookup(b12); r13 = S3_lookup(b13);
-    r14 = S3_lookup(b14); r15 = S3_lookup(b15);
-  } else if (sbox == 4) {
-    r0 = S4_lookup(b0);   r1 = S4_lookup(b1);
-    r2 = S4_lookup(b2);   r3 = S4_lookup(b3);
-    r4 = S4_lookup(b4);   r5 = S4_lookup(b5);
-    r6 = S4_lookup(b6);   r7 = S4_lookup(b7);
-    r8 = S4_lookup(b8);   r9 = S4_lookup(b9);
-    r10 = S4_lookup(b10); r11 = S4_lookup(b11);
-    r12 = S4_lookup(b12); r13 = S4_lookup(b13);
-    r14 = S4_lookup(b14); r15 = S4_lookup(b15);
-  }
-  // reassemble into a 128-bit vector
-  out = (16u8)[
-    r0,  r1,  r2,  r3,
-    r4,  r5,  r6,  r7,
-    r8,  r9,  r10, r11,
-    r12, r13, r14, r15
-  ];
-  return out;
+/*
+ * Convenience wrappers for fixed rotations + XOR
+ * Safe if output overlaps inputs.
+ */
+inline fn rot19r(
+    stack u8[ARIA_BLOCK_SIZE] o,
+    stack u8[ARIA_BLOCK_SIZE] xor_src,
+    stack u8[ARIA_BLOCK_SIZE] z_src
+) {
+    rotnr(19, o, xor_src, z_src);
 }
 
+inline fn rot31r(
+    stack u8[ARIA_BLOCK_SIZE] o,
+    stack u8[ARIA_BLOCK_SIZE] xor_src,
+    stack u8[ARIA_BLOCK_SIZE] z_src
+) {
+    rotnr(31, o, xor_src, z_src);
+}
 
-// /* 3. Substitution Layer
-//      Uses VPSHUFB for parallel byte‐wise table lookup
-// */
-/* 3. Vector SubBytes via 16x Lookup
-    Expand the 128‐bit state into 16 bytes, look each up, and reassemble
-*/
-// inline fn SubBytes(reg u128 state) -> reg u128 {
-//   reg u8 b0, b1, b2, b3, b4, b5, b6, b7;
-//   reg u8 b8, b9, b10, b11, b12, b13, b14, b15;
-//   reg u8 r0, r1, r2, r3, r4, r5, r6, r7;
-//   reg u8 r8, r9, r10, r11, r12, r13, r14, r15;
-//   reg u128 out;
+inline fn rot61l(
+    stack u8[ARIA_BLOCK_SIZE] o,
+    stack u8[ARIA_BLOCK_SIZE] xor_src,
+    stack u8[ARIA_BLOCK_SIZE] z_src
+) {
+    // Left-rotate 61 bits ≡ right-rotate (128-61)=67 bits
+    rotnr(67, o, xor_src, z_src);
+}
 
-//   // extract bytes from state
-//   b0 = #BYTE(state, 0); b1 = #BYTE(state, 1);
-//   b2 = #BYTE(state, 2); b3 = #BYTE(state, 3);
-//   b4 = #BYTE(state, 4); b5 = #BYTE(state, 5);
-//   b6 = #BYTE(state, 6); b7 = #BYTE(state, 7);
-//   b8 = #BYTE(state, 8); b9 = #BYTE(state, 9);
-//   b10 = #BYTE(state, 10); b11 = #BYTE(state, 11);
-//   b12 = #BYTE(state, 12); b13 = #BYTE(state, 13);
-//   b14 = #BYTE(state, 14); b15 = #BYTE(state, 15);
+inline fn rot31l(
+    stack u8[ARIA_BLOCK_SIZE] o,
+    stack u8[ARIA_BLOCK_SIZE] xor_src,
+    stack u8[ARIA_BLOCK_SIZE] z_src
+) {
+    rotnr(97, o, xor_src, z_src); // 128-31=97
+}
 
-//   // perform table lookup per byte
-//   ro = S1_lookup(b0);   r1 = S1_lookup(b1);
-//   r2 = S1_lookup(b2);   r3 = S1_lookup(b3);
-//   r4 = S1_lookup(b4);   r5 = S1_lookup(b5);
-//   r6 = S1_lookup(b6);   r7 = S1_lookup(b7);
-//   r8 = S1_lookup(b8);   r9 = S1_lookup(b9);
-//   r10 = S1_lookup(b10); r11 = S1_lookup(b11);
-//   r12 = S1_lookup(b12); r13 = S1_lookup(b13);
-//   r14 = S1_lookup(b14); r15 = S1_lookup(b15);
+inline fn rot19l(
+    stack u8[ARIA_BLOCK_SIZE] o,
+    stack u8[ARIA_BLOCK_SIZE] xor_src,
+    stack u8[ARIA_BLOCK_SIZE] z_src
+) {
+    rotnr(109, o, xor_src, z_src); // 128-19=109
+}
 
-//   // reassemble into a 128-bit vector
-//   out = (u128)[ r0, r1, r2, r3,
-//                 r4, r5, r6, r7,
-//                 r8, r9, r10, r11,
-//                 r12, r13, r14, r15 ];
-//   return out;
-// }
+/*
+ * First substitution + XOR layer (odd rounds).
+ * Safe if o, x_src, and y_src overlap.
+ */
+inline fn sl1(
+    stack u8[ARIA_BLOCK_SIZE] o,      // output bytes
+    stack u8[ARIA_BLOCK_SIZE] x_src,  // input block x
+    stack u8[ARIA_BLOCK_SIZE] y_src   // input block y (to XOR)
+) {
+    reg u32 i;
+    i = 0;
 
-/* 4. Diffusion Layer P
-     Implements the linear map P via rotates and XORs
-*/
-// inline fn Diffusion_P(reg u128 x) -> reg u128 {
-//   reg u128 t;
-//   t  = x ^ #ROTL(x, 19);
-//   t ^= #ROTL(x, 61);
-//   t ^= #ROTL(x,  6);
-//   t ^= #ROTL(x, 10);
-//   t ^= #ROTL(x, 17);
-//   t ^= #ROTL(x, 41);
-//   t ^= #ROTL(x, 57);
-//   t ^= #ROTL(x, 29);
-//   return t;
-// }
+    // Process 4 bytes per iteration
+    while (i < ARIA_BLOCK_SIZE) {
+        o[i    ] = sb1[ x_src[i    ] ^ y_src[i    ] ];
+        o[i + 1] = sb2[ x_src[i + 1] ^ y_src[i + 1] ];
+        o[i + 2] = sb3[ x_src[i + 2] ^ y_src[i + 2] ];
+        o[i + 3] = sb4[ x_src[i + 3] ^ y_src[i + 3] ];
+        i = i + 4;
+    }
+}
 
-// /* 5. Round Functions FO and FE
-//      Odd rounds (FO): SubBytes(S1,S2) -> P
-//      Even rounds (FE): SubBytes(S3,S4) -> P
-// */
-// inline fn FO(reg u128 s) -> reg u128 {
-//   s = SubBytes(s, 1);
-//   s = SubBytes(s, 2);
-//   s = Diffusion_P(s);
-//   return s;
-// }
+/*
+ * Second substitution + XOR layer (even rounds).
+ * Safe if o, x_src, and y_src overlap.
+ */
+inline fn sl2(
+    stack u8[ARIA_BLOCK_SIZE] o,      // output bytes
+    stack u8[ARIA_BLOCK_SIZE] x_src,  // input block x
+    stack u8[ARIA_BLOCK_SIZE] y_src   // input block y (to XOR)
+) {
+    reg u32 i;
+    i = 0;
 
-// inline fn FE(reg u128 s) -> reg u128 {
-//   s = SubBytes(s, 3);
-//   s = SubBytes(s, 4);
-//   s = Diffusion_P(s);
-//   return s;
-// }
+    // Process 4 bytes per iteration
+    while (i < ARIA_BLOCK_SIZE) {
+        o[i    ] = sb3[ x_src[i    ] ^ y_src[i    ] ];
+        o[i + 1] = sb4[ x_src[i + 1] ^ y_src[i + 1] ];
+        o[i + 2] = sb1[ x_src[i + 2] ^ y_src[i + 2] ];
+        o[i + 3] = sb2[ x_src[i + 3] ^ y_src[i + 3] ];
+        i = i + 4;
+    }
+}
 
-// /* 6. Key Expansion for ARIA‑128
-//       Produces 13 subkeys SK[0…12] for 12 rounds + initial whitening
-// */
-// inline fn aria_keys_expand_128(reg u128 K) -> reg u128[13] SK {
-//   reg u128 W0, W1, W2, W3, tmp;
-//   W0 = K;
-//   tmp = W0 ^ CK1;    W1 = FO(tmp);
-//   tmp = W1 ^ CK2;    W2 = FE(tmp);
-//   tmp = W2 ^ CK3;    W3 = FO(tmp);
+//===============================================================================
+// ARIA Block Diffusion Layer “a”
+// Not safe for in-place operation: output y must not overlap input x.
+//===============================================================================
+inline fn a(
+    stack u8[ARIA_BLOCK_SIZE] y,   // output bytes
+    stack u8[ARIA_BLOCK_SIZE] x    // input bytes
+) {
+    y[ 0] = x[ 3] ^ x[ 4] ^ x[ 6] ^ x[ 8] ^ x[ 9] ^ x[13] ^ x[14];
+    y[ 1] = x[ 2] ^ x[ 5] ^ x[ 7] ^ x[ 8] ^ x[ 9] ^ x[12] ^ x[15];
+    y[ 2] = x[ 1] ^ x[ 4] ^ x[ 6] ^ x[10] ^ x[11] ^ x[12] ^ x[15];
+    y[ 3] = x[ 0] ^ x[ 5] ^ x[ 7] ^ x[10] ^ x[11] ^ x[13] ^ x[14];
+    y[ 4] = x [0] ^ x[ 2] ^ x[ 5] ^ x[ 8] ^ x[11] ^ x[14] ^ x[15];
+    y[ 5] = x[ 1] ^ x[ 3] ^ x[ 4] ^ x[ 9] ^ x[10] ^ x[14] ^ x[15];
+    y[ 6] = x[ 0] ^ x[ 2] ^ x[ 7] ^ x[ 9] ^ x[10] ^ x[12] ^ x[13];
+    y[ 7] = x[ 1] ^ x[ 3] ^ x[ 6] ^ x[ 8] ^ x[11] ^ x[12] ^ x[13];
+    y[ 8] = x[ 0] ^ x[ 1] ^ x[ 4] ^ x[ 7] ^ x[10] ^ x[13] ^ x[15];
+    y[ 9] = x[ 0] ^ x[ 1] ^ x[ 5] ^ x[ 6] ^ x[11] ^ x[12] ^ x[14];
+    y[10] = x[ 2] ^ x[ 3] ^ x[ 5] ^ x[ 6] ^ x[ 8] ^ x[13] ^ x[15];
+    y[11] = x[ 2] ^ x[ 3] ^ x[ 4] ^ x[ 7] ^ x[ 9] ^ x[12] ^ x[14];
+    y[12] = x[ 1] ^ x[ 2] ^ x[ 6] ^ x[ 7] ^ x[ 9] ^ x[11] ^ x[12];
+    y[13] = x[ 0] ^ x[ 3] ^ x[ 6] ^ x[ 7] ^ x[ 8] ^ x[10] ^ x[13];
+    y[14] = x[ 0] ^ x[ 3] ^ x[ 4] ^ x[ 5] ^ x[ 9] ^ x[11] ^ x[14];
+    y[15] = x[ 1] ^ x[ 2] ^ x[ 4] ^ x[ 5] ^ x[ 8] ^ x[10] ^ x[15];
+}
 
-//   SK[0]  = W0;
-//   SK[1]  = W1;
-//   SK[2]  = W2;
-//   SK[3]  = W3;
-//   SK[4]  = W3;
-//   SK[5]  = W2;
-//   SK[6]  = W1;
-//   SK[7]  = W0;
-//   SK[8]  = W1;
-//   SK[9]  = W2;
-//   SK[10] = W3;
-//   SK[11] = W0;
-//   SK[12] = W1;
-//   return SK;
-// }
+/*
+ * Odd round function FO:
+ * o <- a( sl1(d, rk) )
+ * Safe for output to overlap inputs.
+ */
+inline fn FO(
+    stack u8[ARIA_BLOCK_SIZE] o,      // output block
+    stack u8[ARIA_BLOCK_SIZE] d_src,  // data block
+    stack u8[ARIA_BLOCK_SIZE] rk_src  // round‐key block
+) {
+    // Temporary for sl1 output
+    stack u8[ARIA_BLOCK_SIZE] y;
 
-// /* 7. Encryption Rounds */
-// inline fn AddRoundKey(reg u128 state, stack u128 rk) -> reg u128 {
-//   return state ^ rk;
-// }
+    // First substitution + XOR layer
+    sl1(y, d_src, rk_src);
 
-// inline fn aria_encrypt_core(reg u128[13] SK, reg u128 PT) -> reg u128 CT {
-//   reg u128 state;
-//   inline int r;
-//   state = AddRoundKey(PT, SK[0]);
+    // Diffusion layer (must not overlap y)
+    a(o, y);
+}
 
-//   for r = 1 to 11 {
-//     if (r % 2 == 1) {
-//       state = FO(state);
-//     } else {
-//       state = FE(state);
-//     }
-//     state = AddRoundKey(state, SK[r]);
-//   }
+/*
+ * Even round function FE:
+ * o <- a( sl2(d, rk) )
+ * Safe for output to overlap inputs.
+ */
+inline fn FE(
+    stack u8[ARIA_BLOCK_SIZE] o,      // output block
+    stack u8[ARIA_BLOCK_SIZE] d_src,  // data block
+    stack u8[ARIA_BLOCK_SIZE] rk_src  // round‐key block
+) {
+    // Temporary for sl2 output
+    stack u8[ARIA_BLOCK_SIZE] y;
 
-//   ; Final round always uses FO then whitening
-//   state = FO(state);
-//   CT    = AddRoundKey(state, SK[12]);
-//   return CT;
-// }
+    // First substitution + XOR layer
+    sl2(y, d_src, rk_src);
 
-// /* 8. Public API */
-// #ifdef EXPORT_TEST
-// export inline fn aria128_encrypt(reg u128 key, reg u128 plaintext) -> reg u128 {
-//   reg u128[13] subkeys;
-//   subkeys = aria_keys_expand_128(key);
-//   return aria_encrypt_core(subkeys, plaintext);
-// }
-// #endif
+    // Diffusion layer (must not overlap y)
+    a(o, y);
+}
 
-// /* (Decryption routines—inv_SubBytes, inv_Diffusion_P, inv FO/FE,
-//   inv key expansion and aria_decrypt_core—can be added analogously.)
-// */
+/*
+ * Encrypt or decrypt one block.
+ * 'o_buf' and 'pin_buf' may overlap.
+ * 'keys_mem' holds (rounds+1) 16‑byte round keys back‑to‑back.
+ */
+inline fn do_encrypt(
+    stack ptr u8[ARIA_BLOCK_SIZE] o_buf,                    // output block
+    stack ptr u8[ARIA_BLOCK_SIZE] pin_buf,                  // input block
+    stack ptr u8[ARIA_MAX_KEYS * ARIA_BLOCK_SIZE] keys_mem, // all round keys
+    reg u32 rounds                                          // number of rounds
+) {
+    // Temporary state and workspace
+    stack u8[ARIA_BLOCK_SIZE] p;
+    stack u8[ARIA_BLOCK_SIZE] rk;
+    reg u32 i, j, base;
 
+    // 1) Copy input into local state 'p'
+    i = 0;
+    while (i < ARIA_BLOCK_SIZE) {
+        p[i] = pin_buf[i];
+        i = i + 1;
+    }
+
+    // 2) Main rounds: process in pairs (FO then FE)
+    i = 0;
+    while (i < (rounds - 2)) {
+        base = i * ARIA_BLOCK_SIZE;
+        // load round key i into rk
+        j = 0;
+        while (j < ARIA_BLOCK_SIZE) {
+            rk[j] = keys_mem[base + j];
+            j = j + 1;
+        }
+        FO(p, p, rk);
+
+        base = (i + 1) * ARIA_BLOCK_SIZE;
+        j = 0;
+        while (j < ARIA_BLOCK_SIZE) {
+            rk[j] = keys_mem[base + j];
+            j = j + 1;
+        }
+        FE(p, p, rk);
+
+        i = i + 2;
+    }
+
+    // 3) One final FO
+    base = (rounds - 2) * ARIA_BLOCK_SIZE;
+    j = 0;
+    while (j < ARIA_BLOCK_SIZE) {
+        rk[j] = keys_mem[base + j];
+        j = j + 1;
+    }
+    FO(p, p, rk);
+
+    // 4) Final SL2 into output buffer
+    base = (rounds - 1) * ARIA_BLOCK_SIZE;
+    j = 0;
+    while (j < ARIA_BLOCK_SIZE) {
+        rk[j] = keys_mem[base + j];
+        j = j + 1;
+    }
+    sl2(o_buf, p, rk);
+
+    // 5) XOR with last round key
+    base = rounds * ARIA_BLOCK_SIZE;
+    j = 0;
+    while (j < ARIA_BLOCK_SIZE) {
+        rk[j] = keys_mem[base + j];
+        j = j + 1;
+    }
+    xor128(o_buf, o_buf, rk);
+}
+
+inline fn aria_encrypt(
+    reg ptr u8[ARIA_BLOCK_SIZE] in_ptr,                   // &in[0]
+    reg ptr u8[ARIA_BLOCK_SIZE] out_ptr,                  // &out[0]
+    reg ptr u8[ARIA_MAX_KEYS * ARIA_BLOCK_SIZE] keys_ptr, // &key->rd_key[0].c[0]
+    inline int rounds
+) {
+    do_encrypt(out_ptr, in_ptr, keys_ptr, rounds);
+}
+
+inline fn aria_set_encrypt_key(
+    reg ptr u8[ARIA_BLOCK_SIZE] userKey,                  // input key bytes
+    reg u32                  bits,                        // key size in bits
+    reg ptr u8[ARIA_MAX_KEYS*ARIA_BLOCK_SIZE + 4] key_ptr // &ARIA_KEY
+) -> reg u32 {
+    // Return code register
+    reg u32 ret;
+    reg u32 i, j, base;
+
+    ret = 0;
+
+    // Local 16‑byte working registers
+    stack u8[ARIA_BLOCK_SIZE] w0;
+    stack u8[ARIA_BLOCK_SIZE] w1;
+    stack u8[ARIA_BLOCK_SIZE] w2;
+    stack u8[ARIA_BLOCK_SIZE] w3;
+
+    // 1) Copy user key into local state
+    i = 0;
+    while (i < ARIA_BLOCK_SIZE) {
+        w0[i] = userKey[i];
+        i = i + 1;
+    }
+
+
+
+    return ret;
+}

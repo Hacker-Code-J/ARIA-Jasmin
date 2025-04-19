@@ -5,7 +5,7 @@
 	.p2align	5
 _glob_data:
 glob_data:
-G$CK3:
+G$c3:
 	.byte	14
 	.byte	-55
 	.byte	-24
@@ -22,7 +22,7 @@ G$CK3:
 	.byte	55
 	.byte	-110
 	.byte	-37
-G$CK2:
+G$c2:
 	.byte	-80
 	.byte	-30
 	.byte	93
@@ -39,7 +39,7 @@ G$CK2:
 	.byte	74
 	.byte	-79
 	.byte	109
-G$CK1:
+G$c1:
 	.byte	-32
 	.byte	110
 	.byte	-102
@@ -56,7 +56,7 @@ G$CK1:
 	.byte	-63
 	.byte	124
 	.byte	81
-G$S4:
+G$sb4:
 	.byte	48
 	.byte	104
 	.byte	-103
@@ -313,7 +313,7 @@ G$S4:
 	.byte	-94
 	.byte	-84
 	.byte	96
-G$S3:
+G$sb3:
 	.byte	82
 	.byte	9
 	.byte	106
@@ -570,7 +570,7 @@ G$S3:
 	.byte	33
 	.byte	12
 	.byte	125
-G$S2:
+G$sb2:
 	.byte	-30
 	.byte	78
 	.byte	84
@@ -827,7 +827,7 @@ G$S2:
 	.byte	-70
 	.byte	-75
 	.byte	-127
-G$S1:
+G$sb1:
 	.byte	99
 	.byte	124
 	.byte	119
