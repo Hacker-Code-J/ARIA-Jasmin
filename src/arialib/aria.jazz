@@ -4,12 +4,59 @@
    - Inline helpers, register arrays, and stack temporaries
 */
 
+/* 32-bit rotates */
+inline fn rotl32(reg u32 v, inline int r) -> reg u32 {
+  reg u32 res;
+  res = (v << r) | (v >> (32 - r));
+  return res;
+}
+
+inline fn rotr32(reg u32 v, inline int r) -> reg u32 {
+  reg u32 res;
+  res = (v >> r) | (v << (32 - r));
+  return res;
+}
+
+/* 32-bit byte-swap (bswap32) */
+inline fn bswap32(reg u32 v) -> reg u32 {
+  reg u32 res;
+  res = ((v & 0x000000FF) << 24) |
+        ((v & 0x0000FF00) << 8)  |
+        ((v & 0x00FF0000) >> 8)  |
+        ((v & 0xFF000000) >> 24);
+  return res;
+}
+
+/* Extract big-endian byte GET_U8+BE(X, Y) */
+inline fn get_u8_be(reg u128 v, inline int idx) -> reg u8 {
+  reg u8 res;
+  res = (v >> ((15 - idx) * 8)) & 0xFF;
+  return res;
+}
+
+/* Build u32 from four bytes MAKE_U32(V0, V1, V2, V3) */
+inline fn make_u32(reg u8 v0, reg u8 v1, reg u8 v2, reg u8 v3) -> reg u32 {
+  stack u8[4] tmp_bytes;          /* 4‑byte temp */
+  reg u32 val32;                  /* 4‑byte value */
+  reg u32 res;                    /* 4‑byte result */
+  
+  tmp_bytes[0] = v0;
+  tmp_bytes[1] = v1;
+  tmp_bytes[2] = v2;
+  tmp_bytes[3] = v3;
+
+  val32 = tmp_bytes[u32 0];       /* load LE word from tmp_bytes */
+
+  res   = bswap32(val32);         /* to BE */
+  return res;
+}
+
 /* 1. Round Constants (CK) — RFC 5794 §3.2 */
 u128 CK1 = 0x517CC1B727220A94FE13ABE8FA9A6EE0;
 u128 CK2 = 0x6DB14ACC9E21C820FF28B1D5EF5DE2B0;
 u128 CK3 = 0xDB92371D2126E9700324977504E8C90E;
 
-/* 2. S‑Box Tables (256‑byte each) — fill with ARIA’s official values */
+/* 2. S‑Box Tables (256‑byte each) */
 u8[256] S1 = { 
   0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5, 0x30, 0x01, 0x67, 0x2b, 0xfe, 0xd7, 0xab, 0x76,
   0xca, 0x82, 0xc9, 0x7d, 0xfa, 0x59, 0x47, 0xf0, 0xad, 0xd4, 0xa2, 0xaf, 0x9c, 0xa4, 0x72, 0xc0,

@@ -1,3 +1,38 @@
+inline fn rotl32(reg u32 v, inline int r) -> reg u32 {
+  reg u32 res;
+  res = (v << r) | (v >> (32 - r));
+  return res;
+}
+inline fn rotr32(reg u32 v, inline int r) -> reg u32 {
+  reg u32 res;
+  res = (v >> r) | (v << (32 - r));
+  return res;
+}
+inline fn bswap32(reg u32 v) -> reg u32 {
+  reg u32 res;
+  res = ((v & 0x000000FF) << 24) |
+        ((v & 0x0000FF00) << 8) |
+        ((v & 0x00FF0000) >> 8) |
+        ((v & 0xFF000000) >> 24);
+  return res;
+}
+inline fn get_u8_be(reg u128 v, inline int idx) -> reg u8 {
+  reg u8 res;
+  res = (v >> ((15 - idx) * 8)) & 0xFF;
+  return res;
+}
+inline fn make_u32(reg u8 v0, reg u8 v1, reg u8 v2, reg u8 v3) -> reg u32 {
+  stack u8[4] tmp_bytes;
+  reg u32 val32;
+  reg u32 res;
+  tmp_bytes[0] = v0;
+  tmp_bytes[1] = v1;
+  tmp_bytes[2] = v2;
+  tmp_bytes[3] = v3;
+  val32 = tmp_bytes[u32 0];
+  res = bswap32(val32);
+  return res;
+}
 u128 CK1 = 0x517CC1B727220A94FE13ABE8FA9A6EE0;
 u128 CK2 = 0x6DB14ACC9E21C820FF28B1D5EF5DE2B0;
 u128 CK3 = 0xDB92371D2126E9700324977504E8C90E;
