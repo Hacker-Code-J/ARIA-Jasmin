@@ -1,3 +1,13 @@
+inline fn mov128_to_bytes(stack u8[16] out, reg u128 src) {
+  reg u64 lo=(u64)src, hi=(u64)(src>>64);
+  inline int i;
+  for i=0 to 7 { out[i]=(u8)(lo>>(8*i)); out[i+8]=(u8)(hi>>(8*i)); }
+}
+inline fn mov_bytes_to128(reg u128 dst, stack u8[16] in) {
+  reg u64 lo=0, hi=0; inline int i;
+  for i=0 to 7 { lo |= (u64)in[i]<<(8*i); hi |= (u64)in[i+8]<<(8*i); }
+  dst=(u128)lo|((u128)hi<<64);
+}
 inline fn xor128(
     stack u8[ARIA_BLOCK_SIZE] o,
     stack u8[ARIA_BLOCK_SIZE] x,
