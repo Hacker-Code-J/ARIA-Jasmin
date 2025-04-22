@@ -1,0 +1,200 @@
+//-------------------------------------------------------------------------------
+// xor128: byte‑wise XOR of two 128‑bit values into the result.
+// Safe if o, x, and y overlap.
+//-------------------------------------------------------------------------------
+inline fn xor128(
+    stack u8[ARIA_BLOCK_SIZE] o,      // output byte array
+    stack u8[ARIA_BLOCK_SIZE] x,      // input byte array
+    stack u8[ARIA_BLOCK_SIZE] y       // input byte array (from union’s .c[])
+) {
+    inline int i;
+    for i = 0 to ARIA_BLOCK_SIZE - 1 {
+        o[i] = x[i] ^ y[i];
+    }
+}
+
+/*------------------------------------------------------------------------------
+ * Generalized circular rotate right by n bits, then XOR with another block.
+ * Safe for output to overlap inputs.
+ */
+inline fn rotnr(
+    reg u32                            n,
+    stack u8[ARIA_BLOCK_SIZE]          o,    // output bytes
+    stack u8[ARIA_BLOCK_SIZE]          xor_src,
+    stack u8[ARIA_BLOCK_SIZE]          z_src
+) {
+    inline int bytes = n / 8;
+    inline int bits  = n % 8;
+    inline int i;
+
+    // temporary byte buffer for the byte‑rotation
+    stack u8[ARIA_BLOCK_SIZE] t;
+
+    // 1) rotate by whole bytes
+    for i = 0 to ARIA_BLOCK_SIZE - 1 {
+        t[(i + bytes) % ARIA_BLOCK_SIZE] = z_src[i];
+    }
+
+    // 2) rotate bits within each byte, XOR, and store
+    for i = 0 to ARIA_BLOCK_SIZE - 1 {
+        inline int prev = (i == 0) ? ARIA_BLOCK_SIZE - 1 : i - 1;
+        o[i] = ((t[i] >> bits) | 
+               (t[prev] << (8 - bits))) ^ 
+               xor_src[i];
+    }
+}
+
+/*
+ * Convenience wrappers for fixed rotations + XOR
+ * Safe if output overlaps inputs.
+ */
+inline fn rot19r(
+    stack u8[ARIA_BLOCK_SIZE] o,
+    stack u8[ARIA_BLOCK_SIZE] xor_src,
+    stack u8[ARIA_BLOCK_SIZE] z_src
+) {
+    rotnr(19, o, xor_src, z_src);
+}
+
+inline fn rot31r(
+    stack u8[ARIA_BLOCK_SIZE] o,
+    stack u8[ARIA_BLOCK_SIZE] xor_src,
+    stack u8[ARIA_BLOCK_SIZE] z_src
+) {
+    rotnr(31, o, xor_src, z_src);
+}
+
+inline fn rot61l(
+    stack u8[ARIA_BLOCK_SIZE] o,
+    stack u8[ARIA_BLOCK_SIZE] xor_src,
+    stack u8[ARIA_BLOCK_SIZE] z_src
+) {
+    // Left-rotate 61 bits ≡ right-rotate (128-61)=67 bits
+    rotnr(67, o, xor_src, z_src);
+}
+
+inline fn rot31l(
+    stack u8[ARIA_BLOCK_SIZE] o,
+    stack u8[ARIA_BLOCK_SIZE] xor_src,
+    stack u8[ARIA_BLOCK_SIZE] z_src
+) {
+    rotnr(97, o, xor_src, z_src); // 128-31=97
+}
+
+inline fn rot19l(
+    stack u8[ARIA_BLOCK_SIZE] o,
+    stack u8[ARIA_BLOCK_SIZE] xor_src,
+    stack u8[ARIA_BLOCK_SIZE] z_src
+) {
+    rotnr(109, o, xor_src, z_src); // 128-19=109
+}
+
+/*
+ * First substitution + XOR layer (odd rounds).
+ * Safe if o, x_src, and y_src overlap.
+ */
+inline fn sl1(
+    stack u8[ARIA_BLOCK_SIZE] o,      // output bytes
+    stack u8[ARIA_BLOCK_SIZE] x_src,  // input block x
+    stack u8[ARIA_BLOCK_SIZE] y_src   // input block y (to XOR)
+) {
+    reg u32 i;
+    i = 0;
+
+    // Process 4 bytes per iteration
+    while (i < ARIA_BLOCK_SIZE) {
+        o[i    ] = sb1[ x_src[i    ] ^ y_src[i    ] ];
+        o[i + 1] = sb2[ x_src[i + 1] ^ y_src[i + 1] ];
+        o[i + 2] = sb3[ x_src[i + 2] ^ y_src[i + 2] ];
+        o[i + 3] = sb4[ x_src[i + 3] ^ y_src[i + 3] ];
+        i = i + 4;
+    }
+}
+
+/*
+ * Second substitution + XOR layer (even rounds).
+ * Safe if o, x_src, and y_src overlap.
+ */
+inline fn sl2(
+    stack u8[ARIA_BLOCK_SIZE] o,      // output bytes
+    stack u8[ARIA_BLOCK_SIZE] x_src,  // input block x
+    stack u8[ARIA_BLOCK_SIZE] y_src   // input block y (to XOR)
+) {
+    reg u32 i;
+    i = 0;
+
+    // Process 4 bytes per iteration
+    while (i < ARIA_BLOCK_SIZE) {
+        o[i    ] = sb3[ x_src[i    ] ^ y_src[i    ] ];
+        o[i + 1] = sb4[ x_src[i + 1] ^ y_src[i + 1] ];
+        o[i + 2] = sb1[ x_src[i + 2] ^ y_src[i + 2] ];
+        o[i + 3] = sb2[ x_src[i + 3] ^ y_src[i + 3] ];
+        i = i + 4;
+    }
+}
+
+//===============================================================================
+// ARIA Block Diffusion Layer “a”
+// Not safe for in-place operation: output y must not overlap input x.
+//===============================================================================
+inline fn a(
+    stack u8[ARIA_BLOCK_SIZE] y,   // output bytes
+    stack u8[ARIA_BLOCK_SIZE] x    // input bytes
+) {
+    y[ 0] = x[ 3] ^ x[ 4] ^ x[ 6] ^ x[ 8] ^ x[ 9] ^ x[13] ^ x[14];
+    y[ 1] = x[ 2] ^ x[ 5] ^ x[ 7] ^ x[ 8] ^ x[ 9] ^ x[12] ^ x[15];
+    y[ 2] = x[ 1] ^ x[ 4] ^ x[ 6] ^ x[10] ^ x[11] ^ x[12] ^ x[15];
+    y[ 3] = x[ 0] ^ x[ 5] ^ x[ 7] ^ x[10] ^ x[11] ^ x[13] ^ x[14];
+    y[ 4] = x [0] ^ x[ 2] ^ x[ 5] ^ x[ 8] ^ x[11] ^ x[14] ^ x[15];
+    y[ 5] = x[ 1] ^ x[ 3] ^ x[ 4] ^ x[ 9] ^ x[10] ^ x[14] ^ x[15];
+    y[ 6] = x[ 0] ^ x[ 2] ^ x[ 7] ^ x[ 9] ^ x[10] ^ x[12] ^ x[13];
+    y[ 7] = x[ 1] ^ x[ 3] ^ x[ 6] ^ x[ 8] ^ x[11] ^ x[12] ^ x[13];
+    y[ 8] = x[ 0] ^ x[ 1] ^ x[ 4] ^ x[ 7] ^ x[10] ^ x[13] ^ x[15];
+    y[ 9] = x[ 0] ^ x[ 1] ^ x[ 5] ^ x[ 6] ^ x[11] ^ x[12] ^ x[14];
+    y[10] = x[ 2] ^ x[ 3] ^ x[ 5] ^ x[ 6] ^ x[ 8] ^ x[13] ^ x[15];
+    y[11] = x[ 2] ^ x[ 3] ^ x[ 4] ^ x[ 7] ^ x[ 9] ^ x[12] ^ x[14];
+    y[12] = x[ 1] ^ x[ 2] ^ x[ 6] ^ x[ 7] ^ x[ 9] ^ x[11] ^ x[12];
+    y[13] = x[ 0] ^ x[ 3] ^ x[ 6] ^ x[ 7] ^ x[ 8] ^ x[10] ^ x[13];
+    y[14] = x[ 0] ^ x[ 3] ^ x[ 4] ^ x[ 5] ^ x[ 9] ^ x[11] ^ x[14];
+    y[15] = x[ 1] ^ x[ 2] ^ x[ 4] ^ x[ 5] ^ x[ 8] ^ x[10] ^ x[15];
+}
+
+/*
+ * Odd round function FO:
+ * o <- a( sl1(d, rk) )
+ * Safe for output to overlap inputs.
+ */
+inline fn FO(
+    stack u8[ARIA_BLOCK_SIZE] o,      // output block
+    stack u8[ARIA_BLOCK_SIZE] d_src,  // data block
+    stack u8[ARIA_BLOCK_SIZE] rk_src  // round‐key block
+) {
+    // Temporary for sl1 output
+    stack u8[ARIA_BLOCK_SIZE] y;
+
+    // First substitution + XOR layer
+    sl1(y, d_src, rk_src);
+
+    // Diffusion layer (must not overlap y)
+    a(o, y);
+}
+
+/*
+ * Even round function FE:
+ * o <- a( sl2(d, rk) )
+ * Safe for output to overlap inputs.
+ */
+inline fn FE(
+    stack u8[ARIA_BLOCK_SIZE] o,      // output block
+    stack u8[ARIA_BLOCK_SIZE] d_src,  // data block
+    stack u8[ARIA_BLOCK_SIZE] rk_src  // round‐key block
+) {
+    // Temporary for sl2 output
+    stack u8[ARIA_BLOCK_SIZE] y;
+
+    // First substitution + XOR layer
+    sl2(y, d_src, rk_src);
+
+    // Diffusion layer (must not overlap y)
+    a(o, y);
+}

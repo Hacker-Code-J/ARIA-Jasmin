@@ -1,0 +1,134 @@
+inline fn xor128(
+    stack u8[ARIA_BLOCK_SIZE] o,
+    stack u8[ARIA_BLOCK_SIZE] x,
+    stack u8[ARIA_BLOCK_SIZE] y
+) {
+    inline int i;
+    for i = 0 to ARIA_BLOCK_SIZE - 1 {
+        o[i] = x[i] ^ y[i];
+    }
+}
+inline fn rotnr(
+    reg u32 n,
+    stack u8[ARIA_BLOCK_SIZE] o,
+    stack u8[ARIA_BLOCK_SIZE] xor_src,
+    stack u8[ARIA_BLOCK_SIZE] z_src
+) {
+    inline int bytes = n / 8;
+    inline int bits = n % 8;
+    inline int i;
+    stack u8[ARIA_BLOCK_SIZE] t;
+    for i = 0 to ARIA_BLOCK_SIZE - 1 {
+        t[(i + bytes) % ARIA_BLOCK_SIZE] = z_src[i];
+    }
+    for i = 0 to ARIA_BLOCK_SIZE - 1 {
+        inline int prev = (i == 0) ? ARIA_BLOCK_SIZE - 1 : i - 1;
+        o[i] = ((t[i] >> bits) |
+               (t[prev] << (8 - bits))) ^
+               xor_src[i];
+    }
+}
+inline fn rot19r(
+    stack u8[ARIA_BLOCK_SIZE] o,
+    stack u8[ARIA_BLOCK_SIZE] xor_src,
+    stack u8[ARIA_BLOCK_SIZE] z_src
+) {
+    rotnr(19, o, xor_src, z_src);
+}
+inline fn rot31r(
+    stack u8[ARIA_BLOCK_SIZE] o,
+    stack u8[ARIA_BLOCK_SIZE] xor_src,
+    stack u8[ARIA_BLOCK_SIZE] z_src
+) {
+    rotnr(31, o, xor_src, z_src);
+}
+inline fn rot61l(
+    stack u8[ARIA_BLOCK_SIZE] o,
+    stack u8[ARIA_BLOCK_SIZE] xor_src,
+    stack u8[ARIA_BLOCK_SIZE] z_src
+) {
+    rotnr(67, o, xor_src, z_src);
+}
+inline fn rot31l(
+    stack u8[ARIA_BLOCK_SIZE] o,
+    stack u8[ARIA_BLOCK_SIZE] xor_src,
+    stack u8[ARIA_BLOCK_SIZE] z_src
+) {
+    rotnr(97, o, xor_src, z_src);
+}
+inline fn rot19l(
+    stack u8[ARIA_BLOCK_SIZE] o,
+    stack u8[ARIA_BLOCK_SIZE] xor_src,
+    stack u8[ARIA_BLOCK_SIZE] z_src
+) {
+    rotnr(109, o, xor_src, z_src);
+}
+inline fn sl1(
+    stack u8[ARIA_BLOCK_SIZE] o,
+    stack u8[ARIA_BLOCK_SIZE] x_src,
+    stack u8[ARIA_BLOCK_SIZE] y_src
+) {
+    reg u32 i;
+    i = 0;
+    while (i < ARIA_BLOCK_SIZE) {
+        o[i ] = sb1[ x_src[i ] ^ y_src[i ] ];
+        o[i + 1] = sb2[ x_src[i + 1] ^ y_src[i + 1] ];
+        o[i + 2] = sb3[ x_src[i + 2] ^ y_src[i + 2] ];
+        o[i + 3] = sb4[ x_src[i + 3] ^ y_src[i + 3] ];
+        i = i + 4;
+    }
+}
+inline fn sl2(
+    stack u8[ARIA_BLOCK_SIZE] o,
+    stack u8[ARIA_BLOCK_SIZE] x_src,
+    stack u8[ARIA_BLOCK_SIZE] y_src
+) {
+    reg u32 i;
+    i = 0;
+    while (i < ARIA_BLOCK_SIZE) {
+        o[i ] = sb3[ x_src[i ] ^ y_src[i ] ];
+        o[i + 1] = sb4[ x_src[i + 1] ^ y_src[i + 1] ];
+        o[i + 2] = sb1[ x_src[i + 2] ^ y_src[i + 2] ];
+        o[i + 3] = sb2[ x_src[i + 3] ^ y_src[i + 3] ];
+        i = i + 4;
+    }
+}
+inline fn a(
+    stack u8[ARIA_BLOCK_SIZE] y,
+    stack u8[ARIA_BLOCK_SIZE] x
+) {
+    y[ 0] = x[ 3] ^ x[ 4] ^ x[ 6] ^ x[ 8] ^ x[ 9] ^ x[13] ^ x[14];
+    y[ 1] = x[ 2] ^ x[ 5] ^ x[ 7] ^ x[ 8] ^ x[ 9] ^ x[12] ^ x[15];
+    y[ 2] = x[ 1] ^ x[ 4] ^ x[ 6] ^ x[10] ^ x[11] ^ x[12] ^ x[15];
+    y[ 3] = x[ 0] ^ x[ 5] ^ x[ 7] ^ x[10] ^ x[11] ^ x[13] ^ x[14];
+    y[ 4] = x [0] ^ x[ 2] ^ x[ 5] ^ x[ 8] ^ x[11] ^ x[14] ^ x[15];
+    y[ 5] = x[ 1] ^ x[ 3] ^ x[ 4] ^ x[ 9] ^ x[10] ^ x[14] ^ x[15];
+    y[ 6] = x[ 0] ^ x[ 2] ^ x[ 7] ^ x[ 9] ^ x[10] ^ x[12] ^ x[13];
+    y[ 7] = x[ 1] ^ x[ 3] ^ x[ 6] ^ x[ 8] ^ x[11] ^ x[12] ^ x[13];
+    y[ 8] = x[ 0] ^ x[ 1] ^ x[ 4] ^ x[ 7] ^ x[10] ^ x[13] ^ x[15];
+    y[ 9] = x[ 0] ^ x[ 1] ^ x[ 5] ^ x[ 6] ^ x[11] ^ x[12] ^ x[14];
+    y[10] = x[ 2] ^ x[ 3] ^ x[ 5] ^ x[ 6] ^ x[ 8] ^ x[13] ^ x[15];
+    y[11] = x[ 2] ^ x[ 3] ^ x[ 4] ^ x[ 7] ^ x[ 9] ^ x[12] ^ x[14];
+    y[12] = x[ 1] ^ x[ 2] ^ x[ 6] ^ x[ 7] ^ x[ 9] ^ x[11] ^ x[12];
+    y[13] = x[ 0] ^ x[ 3] ^ x[ 6] ^ x[ 7] ^ x[ 8] ^ x[10] ^ x[13];
+    y[14] = x[ 0] ^ x[ 3] ^ x[ 4] ^ x[ 5] ^ x[ 9] ^ x[11] ^ x[14];
+    y[15] = x[ 1] ^ x[ 2] ^ x[ 4] ^ x[ 5] ^ x[ 8] ^ x[10] ^ x[15];
+}
+inline fn FO(
+    stack u8[ARIA_BLOCK_SIZE] o,
+    stack u8[ARIA_BLOCK_SIZE] d_src,
+    stack u8[ARIA_BLOCK_SIZE] rk_src
+) {
+    stack u8[ARIA_BLOCK_SIZE] y;
+    sl1(y, d_src, rk_src);
+    a(o, y);
+}
+inline fn FE(
+    stack u8[ARIA_BLOCK_SIZE] o,
+    stack u8[ARIA_BLOCK_SIZE] d_src,
+    stack u8[ARIA_BLOCK_SIZE] rk_src
+) {
+    stack u8[ARIA_BLOCK_SIZE] y;
+    sl2(y, d_src, rk_src);
+    a(o, y);
+}
