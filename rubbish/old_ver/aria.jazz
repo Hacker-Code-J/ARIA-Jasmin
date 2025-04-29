@@ -56,80 +56,80 @@ inline fn key_expansion(
     xor128(rk12, W0, zero);
 }
 
-// //-----------------------------------------------------------------------------
-// // Top-Level Encryption Function (byte‑wise)
-// //-----------------------------------------------------------------------------
-// inline fn aria_encrypt_stack(
-//     stack u8[ARIA_BLOCK_SIZE] key_buf,
-//     stack u8[ARIA_BLOCK_SIZE] in_buf
-// ) -> stack u8[ARIA_BLOCK_SIZE] {
-//     stack u8[ARIA_BLOCK_SIZE] zero;
-//     inline int zi;
-//     for zi = 0 to ARIA_BLOCK_SIZE - 1 {
-//         zero[zi] = 0;
-//     }
+//-----------------------------------------------------------------------------
+// Top-Level Encryption Function (byte‑wise)
+//-----------------------------------------------------------------------------
+inline fn aria_encrypt_stack(
+    stack u8[ARIA_BLOCK_SIZE] key_buf,
+    stack u8[ARIA_BLOCK_SIZE] in_buf
+) -> stack u8[ARIA_BLOCK_SIZE] {
+    stack u8[ARIA_BLOCK_SIZE] zero;
+    inline int zi;
+    for zi = 0 to ARIA_BLOCK_SIZE - 1 {
+        zero[zi] = 0;
+    }
 
-//     stack u8[ARIA_BLOCK_SIZE] rk0, rk1, rk2, rk3, rk4, rk5, rk6;
-//     stack u8[ARIA_BLOCK_SIZE] rk7, rk8, rk9, rk10, rk11, rk12;
-//     key_expansion(
-//         key_buf,
-//         rk0, rk1, rk2, rk3, rk4, rk5, rk6,
-//         rk7, rk8, rk9, rk10, rk11, rk12
-//     );
+    stack u8[ARIA_BLOCK_SIZE] rk0, rk1, rk2, rk3, rk4, rk5, rk6;
+    stack u8[ARIA_BLOCK_SIZE] rk7, rk8, rk9, rk10, rk11, rk12;
+    key_expansion(
+        key_buf,
+        rk0, rk1, rk2, rk3, rk4, rk5, rk6,
+        rk7, rk8, rk9, rk10, rk11, rk12
+    );
 
-//     stack u8[ARIA_BLOCK_SIZE] state;
-//     xor128(state, in_buf, rk0);
-//     stack u8[ARIA_BLOCK_SIZE] tmp;
-//     FO(tmp, state, rk1); xor128(state, tmp, zero);
-//     FE(tmp, state, rk2); xor128(state, tmp, zero);
-//     FO(tmp, state, rk3); xor128(state, tmp, zero);
-//     FE(tmp, state, rk4); xor128(state, tmp, zero);
-//     FO(tmp, state, rk5); xor128(state, tmp, zero);
-//     FE(tmp, state, rk6); xor128(state, tmp, zero);
-//     FO(tmp, state, rk7); xor128(state, tmp, zero);
-//     FE(tmp, state, rk8); xor128(state, tmp, zero);
-//     FO(tmp, state, rk9); xor128(state, tmp, zero);
-//     FE(tmp, state, rk10); xor128(state, tmp, zero);
-//     FO(tmp, state, rk11); xor128(state, tmp, zero);
+    stack u8[ARIA_BLOCK_SIZE] state;
+    xor128(state, in_buf, rk0);
+    stack u8[ARIA_BLOCK_SIZE] tmp;
+    FO(tmp, state, rk1); xor128(state, tmp, zero);
+    FE(tmp, state, rk2); xor128(state, tmp, zero);
+    FO(tmp, state, rk3); xor128(state, tmp, zero);
+    FE(tmp, state, rk4); xor128(state, tmp, zero);
+    FO(tmp, state, rk5); xor128(state, tmp, zero);
+    FE(tmp, state, rk6); xor128(state, tmp, zero);
+    FO(tmp, state, rk7); xor128(state, tmp, zero);
+    FE(tmp, state, rk8); xor128(state, tmp, zero);
+    FO(tmp, state, rk9); xor128(state, tmp, zero);
+    FE(tmp, state, rk10); xor128(state, tmp, zero);
+    FO(tmp, state, rk11); xor128(state, tmp, zero);
 
-//     stack u8[ARIA_BLOCK_SIZE] sub_out;
-//     sl2(sub_out, state, rk12);
-//     xor128(state, sub_out, rk12);
-//     return state;
-// }
+    stack u8[ARIA_BLOCK_SIZE] sub_out;
+    sl2(sub_out, state, rk12);
+    xor128(state, sub_out, rk12);
+    return state;
+}
 
-// inline fn aria_encrypt_into(
-//     stack u8[ARIA_BLOCK_SIZE] key,
-//     stack u8[ARIA_BLOCK_SIZE] in_blk,
-//     stack u8[ARIA_BLOCK_SIZE] out_blk
-// ) {
-//     stack u8[ARIA_BLOCK_SIZE] result = aria_encrypt_stack(key, in_blk);
-//     inline int i;
-//     for i = 0 to ARIA_BLOCK_SIZE - 1 {
-//         out_blk[i] = result[i];
-//     }
-// }
+inline fn aria_encrypt_into(
+    stack u8[ARIA_BLOCK_SIZE] key,
+    stack u8[ARIA_BLOCK_SIZE] in_blk,
+    stack u8[ARIA_BLOCK_SIZE] out_blk
+) {
+    stack u8[ARIA_BLOCK_SIZE] result = aria_encrypt_stack(key, in_blk);
+    inline int i;
+    for i = 0 to ARIA_BLOCK_SIZE - 1 {
+        out_blk[i] = result[i];
+    }
+}
 
-// export fn aria_encrypt_export(
-//     reg ptr u8[ARIA_BLOCK_SIZE] key,
-//     reg ptr u8[ARIA_BLOCK_SIZE] in_blk
-// ) -> reg u8 {
-//     stack u8[ARIA_BLOCK_SIZE] key_buf;
-//     stack u8[ARIA_BLOCK_SIZE] in_buf;
-//     stack u8[ARIA_BLOCK_SIZE] out_buf;
-//     inline int i;
+export fn aria_encrypt_export(
+    reg ptr u8[ARIA_BLOCK_SIZE] key,
+    reg ptr u8[ARIA_BLOCK_SIZE] in_blk
+) -> reg u8 {
+    stack u8[ARIA_BLOCK_SIZE] key_buf;
+    stack u8[ARIA_BLOCK_SIZE] in_buf;
+    stack u8[ARIA_BLOCK_SIZE] out_buf;
+    inline int i;
 
-//     for i = 0 to ARIA_BLOCK_SIZE - 1 {
-//         key_buf[i] = key[i];
-//         in_buf[i] = in_blk[i];
-//     }
+    for i = 0 to ARIA_BLOCK_SIZE - 1 {
+        key_buf[i] = key[i];
+        in_buf[i] = in_blk[i];
+    }
 
-//     aria_encrypt_into(key_buf, in_buf, out_buf);
+    aria_encrypt_into(key_buf, in_buf, out_buf);
 
-//     // Return just one byte (e.g. out_buf[0]) for demonstration
-//     // Real API would need to return each byte via a loop or custom wrapper
-//     return out_buf[0]; // TEMPORARY
-// }
+    // Return just one byte (e.g. out_buf[0]) for demonstration
+    // Real API would need to return each byte via a loop or custom wrapper
+    return out_buf[0]; // TEMPORARY
+}
 
 
 

@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": false,
-      "cwd": "/home/hacker-code-j/Desktop/2025/Research/ARIA-Jasmin/src/aria_openssl",
-      "program": "/home/hacker-code-j/Desktop/2025/Research/ARIA-Jasmin/src/aria_openssl/build/Debug/outDebug",
+      "cwd": "/home/hacker-code-j/Desktop/2025/Research/ARIA-Jasmin/openssl",
+      "program": "/home/hacker-code-j/Desktop/2025/Research/ARIA-Jasmin/openssl/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [

@@ -10,17 +10,64 @@
 
 #include "openssl_aria.h"
 
-extern unsigned int jyh_aria_set_encrypt_key(const unsigned char *userKey, const int bits,
-                               ARIA_KEY *key);
+// extern unsigned int jyh_aria_set_encrypt_key(const unsigned char *userKey, const int bits, ARIA_KEY *key);
+
+/**
+ * export fn aria_encrypt(
+    reg ptr u8[ARIA_BLOCK_SIZE] key,
+    reg ptr u8[ARIA_BLOCK_SIZE] in_blk,
+    reg ptr u8[ARIA_BLOCK_SIZE] out_blk)
+ */
+// extern void jyh_aria_encrypt(const ARIA_KEY *key, const unsigned char *in, unsigned char *out);
+
+// #define TEST_FLAG_1 1
+// #define TEST_FLAG_2 1
 
 int main() {
     /* key : 00 11 22 33 44 55 66 77 88 99 aa bb cc dd ee ff */
-    unsigned char key[16] = {0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77,
-                              0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff};
+    unsigned char key[16] = {
+        0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77,
+        0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff
+    };
     /* plaintext : 11 11 11 11 aa aa aa aa 11 11 11 11 bb bb bb bb */
-   unsigned char plaintext[16] = {0x11, 0x11, 0x11, 0x11, 0xaa, 0xaa, 0xaa, 0xaa,
-                                    0x11, 0x11, 0x11, 0x11, 0xbb, 0xbb, 0xbb, 0xbb};
+    unsigned char plaintext[16] = {
+        0x11, 0x11, 0x11, 0x11, 0xaa, 0xaa, 0xaa, 0xaa,
+        0x11, 0x11, 0x11, 0x11, 0xbb, 0xbb, 0xbb, 0xbb
+    };
+    /* ciphertext : */
     unsigned char ciphertext[16] = { 0x00, };
+    
+    ARIA_KEY aria_key;
+    memset(&aria_key, 0, sizeof(ARIA_KEY)); // Initialize the key structure
+    // printf("Default aria_key:\n");
+    // for (int i = 0; i < 16; i++) {
+    //     printf("%02x ", aria_key.rd_key[i].c[0]);
+    // } puts("");
+
+    ossl_aria_set_encrypt_key(key, 128, &aria_key);
+    ossl_aria_encrypt(plaintext, ciphertext, &aria_key);
+
+    printf("Plaintext: ");
+    for (int i = 0; i < 16; i++) {
+        printf("%02x ", plaintext[i]);
+    }
+    printf("\n");
+    printf("Ciphertext: ");
+    for (int i = 0; i < 16; i++) {
+        printf("%02x ", ciphertext[i]);
+    }
+    printf("\n");
+
+    ossl_aria_set_decrypt_key(key, 128, &aria_key);
+    unsigned char decrypted[16];
+    ossl_aria_encrypt(ciphertext, decrypted, &aria_key);
+    printf("Decrypted: ");
+    for (int i = 0; i < 16; i++) {
+        printf("%02x ", decrypted[i]);
+    }
+    printf("\n");
+    
+#ifdef TEST_FLAG_1
     ARIA_KEY aria_key;
     memset(&aria_key, 0, sizeof(ARIA_KEY)); // Initialize the key structure
     printf("Default aria_key:\n");
@@ -84,12 +131,6 @@ int main() {
     } else {
         printf("Decryption failed!\n");
     }
-    // Free any allocated resources if necessary
-    // In this case, no dynamic memory allocation is used, so nothing to free.
-    // Note: In a real-world scenario, you should also handle errors and edge cases.
-    // For example, check if the key length is valid, handle memory allocation failures, etc.
-    // Also, ensure to use secure memory handling practices to avoid memory leaks or vulnerabilities.
-    // This is a simple demonstration and should not be used in production code without proper error handling.
-
+#endif
     return 0;
 }

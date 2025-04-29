@@ -349,6 +349,9 @@ static void FE(ARIA_u128 *o, const ARIA_u128 *d,
     a(o, &y);
 }
 
+// extern void FE(unsigned char *o, const unsigned char *d, const unsigned char *rk);
+// extern void FO(unsigned char *o, const unsigned char *d, const unsigned char *rk);
+
 /*
  * Encrypt or decrypt a single block
  * in and out can overlap

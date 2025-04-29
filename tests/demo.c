@@ -9,6 +9,16 @@
 
 //------------------------------------------------------------------------------
 // Helpers translated from Jasmin inline functions
+/*
+ * Translated from Jasmin inline functions:
+ *
+ * __tostack64u8   : copy 64 bytes from memory at `inp` into stack array out[64]
+ * __tostack96u8   : copy 96 bytes from memory at `inp` into stack array out[96]
+ * __tostack32u8   : copy 32 bytes from memory at `inp` into stack array out[32]
+ * __fromstack32u8 : copy 32 bytes from stack array in[32] into memory at `outp`
+ * __fromstack134u8: copy 134 bytes from stack array in[134] into memory at `outp`
+ * __fromstack64u8 : copy 64 bytes from stack array in[64] into memory at `outp`
+ */
 //------------------------------------------------------------------------------
 
 static inline uint8_t* __tostack64u8(uint8_t out[64], uintptr_t inp) {

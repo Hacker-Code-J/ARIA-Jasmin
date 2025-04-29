@@ -1,111 +1,45 @@
 require "aria_globals.jinc"
 require "aria_helpers.jinc"
-export fn jyh_aria_set_encrypt_key(
-    reg u64 userKeyAddr,
-    reg u32 bits,
-    reg u64 keyPtrAddr
-) -> reg u32 {
-    reg u32 ret;
-    ret = 0;
-    stack u8[ARIA_BLOCK_SIZE] w0, w1, w2, w3;
-    stack u8[ARIA_BLOCK_SIZE] kr, ck1, ck2, ck3, tmp;
-    reg u32 rounds;
-    inline int i, j;
-    for i = 0 to ARIA_BLOCK_SIZE - 1 {
-        w0[i] = (u8)[userKeyAddr + i];
+inline fn key_expansion(
+    stack u8[ARIA_BLOCK_SIZE] key,
+    stack u8[ARIA_BLOCK_SIZE] rk0,
+    stack u8[ARIA_BLOCK_SIZE] rk1,
+    stack u8[ARIA_BLOCK_SIZE] rk2,
+    stack u8[ARIA_BLOCK_SIZE] rk3,
+    stack u8[ARIA_BLOCK_SIZE] rk4,
+    stack u8[ARIA_BLOCK_SIZE] rk5,
+    stack u8[ARIA_BLOCK_SIZE] rk6,
+    stack u8[ARIA_BLOCK_SIZE] rk7,
+    stack u8[ARIA_BLOCK_SIZE] rk8,
+    stack u8[ARIA_BLOCK_SIZE] rk9,
+    stack u8[ARIA_BLOCK_SIZE] rk10,
+    stack u8[ARIA_BLOCK_SIZE] rk11,
+    stack u8[ARIA_BLOCK_SIZE] rk12
+) {
+    stack u8[ARIA_BLOCK_SIZE] W0;
+    stack u8[ARIA_BLOCK_SIZE] W1;
+    stack u8[ARIA_BLOCK_SIZE] W2;
+    stack u8[ARIA_BLOCK_SIZE] W3;
+    stack u8[ARIA_BLOCK_SIZE] zero;
+    inline int zi;
+    for zi = 0 to ARIA_BLOCK_SIZE - 1 {
+        zero[zi] = 0;
     }
-    if bits == 128 {
-        rounds = 12;
-        for i = 0 to ARIA_BLOCK_SIZE - 1 {
-            ck1[i] = c1[i];
-            ck2[i] = c2[i];
-            ck3[i] = c3[i];
-            kr[i] = 0;
-        }
-    }
-    else if bits == 192 {
-        rounds = 14;
-        for i = 0 to ARIA_BLOCK_SIZE - 1 {
-            ck1[i] = c2[i];
-            ck2[i] = c3[i];
-            ck3[i] = c1[i];
-        }
-        for i = 0 to (ARIA_BLOCK_SIZE/2 - 1) {
-            kr[i] = (u8)[userKeyAddr + ARIA_BLOCK_SIZE + i];
-        }
-        for i = ARIA_BLOCK_SIZE/2 to ARIA_BLOCK_SIZE - 1 {
-            kr[i] = 0;
-        }
-    }
-    else if bits == 256 {
-        rounds = 16;
-        for i = 0 to ARIA_BLOCK_SIZE - 1 {
-            ck1[i] = c3[i];
-            ck2[i] = c1[i];
-            ck3[i] = c2[i];
-            kr[i] = (u8)[userKeyAddr + ARIA_BLOCK_SIZE + i];
-        }
-    }
-    else {
-        ret = -2;
-    }
-    (u32)[ keyPtrAddr + (ARIA_MAX_KEYS * ARIA_BLOCK_SIZE) ] = rounds;
-    FO(tmp, w0, ck1);
-    xor128(w1, tmp, kr);
-    FE(tmp, w1, ck2);
-    xor128(w2, tmp, w0);
-    FO(tmp, w2, ck3);
-    xor128(w3, tmp, w1);
-    for i = 0 to 3 {
-        if i == 0 { rot19r(tmp, w0, w1); }
-        if i == 1 { rot19r(tmp, w1, w2); }
-        if i == 2 { rot19r(tmp, w2, w3); }
-        if i == 3 { rot19r(tmp, w3, w0); }
-        for j = 0 to ARIA_BLOCK_SIZE - 1 {
-            (u8)[ keyPtrAddr + (i*ARIA_BLOCK_SIZE) + j ] = tmp[j];
-        }
-    }
-    for i = 4 to 7 {
-        if i == 4 { rot31r(tmp, w0, w1); }
-        if i == 5 { rot31r(tmp, w1, w2); }
-        if i == 6 { rot31r(tmp, w2, w3); }
-        if i == 7 { rot31r(tmp, w3, w0); }
-        for j = 0 to ARIA_BLOCK_SIZE - 1 {
-            (u8)[ keyPtrAddr + (i*ARIA_BLOCK_SIZE) + j ] = tmp[j];
-        }
-    }
-    for i = 8 to 11 {
-        if i == 8 { rot61l(tmp, w0, w1); }
-        if i == 9 { rot61l(tmp, w1, w2); }
-        if i == 10 { rot61l(tmp, w2, w3); }
-        if i == 11 { rot61l(tmp, w3, w0); }
-        for j = 0 to ARIA_BLOCK_SIZE - 1 {
-            (u8)[ keyPtrAddr + (i*ARIA_BLOCK_SIZE) + j ] = tmp[j];
-        }
-    }
-    rot31l(tmp, w0, w1);
-    for j = 0 to ARIA_BLOCK_SIZE - 1 {
-        (u8)[ keyPtrAddr + (12*ARIA_BLOCK_SIZE) + j ] = tmp[j];
-    }
-    if rounds > 12 {
-      rot31l(tmp, w1, w2);
-      for j = 0 to ARIA_BLOCK_SIZE - 1 {
-          (u8)[ keyPtrAddr + (13*ARIA_BLOCK_SIZE) + j ] = tmp[j];
-      }
-      rot31l(tmp, w2, w3);
-      for j = 0 to ARIA_BLOCK_SIZE - 1 {
-          (u8)[ keyPtrAddr + (14*ARIA_BLOCK_SIZE) + j ] = tmp[j];
-      }
-    }
-    if rounds > 14 {
-      rot31l(tmp, w3, w0);
-      for j = 0 to ARIA_BLOCK_SIZE - 1 {
-          (u8)[ keyPtrAddr + (15*ARIA_BLOCK_SIZE) + j ] = tmp[j];
-      }
-      rot19l(tmp, w0, w1);
-      for j = 0 to ARIA_BLOCK_SIZE - 1 {
-          (u8)[ keyPtrAddr + (16*ARIA_BLOCK_SIZE) + j ] = tmp[j];
-      }
-    }
-    return ret;
+    xor128(W0, key, zero);
+    FO(W1, W0, c1);
+    FE(W2, W1, c2);
+    FO(W3, W2, c3);
+    xor128(rk0, W0, zero);
+    rot19l(rk1, W1, zero);
+    rot31l(rk2, W2, zero);
+    rot61l(rk3, W3, zero);
+    rot31r(rk4, W2, zero);
+    rot19r(rk5, W1, zero);
+    xor128(rk6, W0, zero);
+    rot19r(rk7, W1, zero);
+    rot31r(rk8, W2, zero);
+    rot61l(rk9, W3, zero);
+    rot31l(rk10, W2, zero);
+    rot19l(rk11, W1, zero);
+    xor128(rk12, W0, zero);
 }
